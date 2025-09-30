@@ -1,0 +1,62 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command(
+  'node',
+  ['-p', 'require.resolve("react-native/scripts/react_native_pods.rb",{paths:[process.argv[1]]})', __dir__]
+).strip
+
+# --- Force a modern platform so Pods stop declaring iOS 9/10 ---
+platform :ios, '15.1'   # bump higher if you want
+
+prepare_react_native_project!
+
+# Firebase requires modular headers
+use_modular_headers!
+
+# --- RN + Hermes works best with static frameworks on iOS ---
+use_frameworks! :linkage => :static
+$RNFirebaseAsStaticFramework = true
+
+target 'mvp_fresh' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    # Standard RN post-install
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false
+    )
+
+    # 1) Force IPHONEOS_DEPLOYMENT_TARGET on ALL Pods to avoid old targets (9.0/10.0)
+    installer.pods_project.targets.each do |t|
+      t.build_configurations.each do |bc|
+        bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+      end
+    end
+
+    # 2) Nuke duplicate modulemap that redefines 'react_runtime'
+    require 'fileutils'
+    headers_root = File.expand_path(File.join(installer.sandbox.root, '..', 'Pods', 'Headers'))
+    Dir.glob(File.join(headers_root, '{Public,Private}/**/React-jsitooling.modulemap')).each do |p|
+      Pod::UI.puts "Removing stray modulemap: #{p}"
+      FileUtils.rm_f(p)
+    end
+
+    # 3) Also make sure Xcode doesn't try to build that modulemap if it’s attached
+    installer.pods_project.targets.each do |t|
+      next unless t.name == 'react_runtime'
+      t.headers_build_phase.files&.dup&.each do |f|
+        path = f.file_ref&.path.to_s
+        if path.end_with?('React-jsitooling.modulemap')
+          Pod::UI.puts "Detaching modulemap from target #{t.name}: #{path}"
+          f.remove_from_build_phase
+        end
+      end
+    end
+  end
+end

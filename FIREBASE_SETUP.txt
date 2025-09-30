@@ -1,0 +1,282 @@
+===============================================================================
+                         FIREBASE AUTHENTICATION SETUP GUIDE
+                            Complete Step-by-Step Instructions
+===============================================================================
+
+This guide will walk you through setting up Firebase Authentication for your
+React Native MVP app. Follow each step carefully to ensure proper configuration.
+
+===============================================================================
+STEP 1: CREATE FIREBASE PROJECT
+===============================================================================
+
+1. Go to https://console.firebase.google.com
+2. Click "Create a project" or "Add project"
+3. Enter your project name (e.g., "mvp-auth-app")
+4. Choose whether to enable Google Analytics (recommended for production)
+5. Select or create a Google Analytics account if enabled
+6. Click "Create project"
+7. Wait for project creation to complete, then click "Continue"
+
+===============================================================================
+STEP 2: ENABLE AUTHENTICATION
+===============================================================================
+
+1. In your Firebase project console, click on "Authentication" in the left sidebar
+2. Click "Get started" if it's your first time
+3. Go to the "Sign-in method" tab
+4. Enable the following providers:
+
+   EMAIL/PASSWORD:
+   - Click on "Email/Password"
+   - Toggle "Enable" to ON
+   - Leave "Email link (passwordless sign-in)" OFF for now
+   - Click "Save"
+
+   GOOGLE:
+   - Click on "Google"
+   - Toggle "Enable" to ON
+   - Select your project support email
+   - Click "Save"
+   - ⚠️ IMPORTANT: Copy the "Web client ID" - you'll need this later
+
+   APPLE (iOS only):
+   - Click on "Apple"
+   - Toggle "Enable" to ON
+   - You'll need to configure Apple Sign-In in your Apple Developer account first
+   - Click "Save"
+
+===============================================================================
+STEP 3: CONFIGURE ANDROID APP
+===============================================================================
+
+1. In Firebase console, click the gear icon next to "Project Overview"
+2. Select "Project settings"
+3. Scroll down to "Your apps" section
+4. Click the Android icon to add an Android app
+5. Enter your Android package name:
+   - For this MVP: com.mvpauth (or your preferred package name)
+   - ⚠️ This must match what you set in android/app/build.gradle
+6. Enter app nickname: "MVP Auth Android"
+7. Leave SHA-1 blank for now (add later for release builds)
+8. Click "Register app"
+9. Download the google-services.json file
+10. Place google-services.json in: android/app/google-services.json
+11. Click "Continue" through the SDK setup steps
+12. Click "Continue to console"
+
+===============================================================================
+STEP 4: CONFIGURE iOS APP  
+===============================================================================
+
+1. In Firebase project settings, click the iOS icon to add an iOS app
+2. Enter your iOS bundle ID:
+   - For this MVP: com.mvpauth (or your preferred bundle ID)
+   - ⚠️ This must match what you set in ios/mvpauth/Info.plist
+3. Enter app nickname: "MVP Auth iOS"
+4. Leave App Store ID blank for now
+5. Click "Register app"
+6. Download the GoogleService-Info.plist file
+7. Place GoogleService-Info.plist in: ios/mvpauth/GoogleService-Info.plist
+8. ⚠️ IMPORTANT: Open Xcode and drag the file into your project
+   - Make sure "Copy items if needed" is checked
+   - Make sure your target is selected
+9. Click "Continue" through the SDK setup steps
+10. Click "Continue to console"
+
+===============================================================================
+STEP 5: UPDATE YOUR CODE
+===============================================================================
+
+1. Open src/contexts/AuthContext.tsx
+
+2. Find this line:
+   webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+
+3. Replace 'YOUR_WEB_CLIENT_ID' with the Web client ID you copied from Step 2:
+   webClientId: '1234567890-abcdefghijklmnop.apps.googleusercontent.com',
+
+4. The line should look something like:
+   webClientId: '390539259855-i0vqm8onna2qk1116dndtadl3ga80av9.apps.googleusercontent.com',
+
+===============================================================================
+STEP 6: APPLE SIGN-IN SETUP (iOS ONLY)
+===============================================================================
+
+APPLE DEVELOPER ACCOUNT SETUP:
+1. Go to https://developer.apple.com/account
+2. Sign in with your Apple Developer account
+3. Go to "Certificates, Identifiers & Profiles"
+4. Select "Identifiers" from the sidebar
+5. Find your app's bundle ID (or create one if it doesn't exist)
+6. Edit your bundle ID
+7. Scroll down to "Sign in with Apple"
+8. Check the "Sign in with Apple" checkbox
+9. Click "Save"
+
+FIREBASE CONSOLE SETUP:
+1. In Firebase console, go to Authentication > Sign-in method
+2. Click on "Apple"
+3. In "Service ID" field, enter your bundle ID
+4. For "OAuth code flow configuration":
+   - You can leave this blank for basic setup
+   - For production, you'll need to configure a Service ID
+5. Click "Save"
+
+===============================================================================
+STEP 7: ANDROID CONFIGURATION FILES
+===============================================================================
+
+1. Open android/app/build.gradle
+2. Make sure your applicationId matches your Firebase Android package name:
+   
+   android {
+       ...
+       defaultConfig {
+           applicationId "com.mvpauth"  // Must match Firebase
+           ...
+       }
+   }
+
+3. Open android/build.gradle (project level)
+4. Add this to dependencies (if not already present):
+   
+   dependencies {
+       classpath 'com.google.gms:google-services:4.3.15'
+   }
+
+5. Open android/app/build.gradle (app level)
+6. Add this at the bottom of the file:
+   
+   apply plugin: 'com.google.gms.google-services'
+
+===============================================================================
+STEP 8: iOS CONFIGURATION FILES
+===============================================================================
+
+1. Open ios/mvpauth/Info.plist
+2. Make sure your bundle identifier matches Firebase:
+   
+   <key>CFBundleIdentifier</key>
+   <string>com.mvpauth</string>
+
+3. For Google Sign-In, add URL scheme to Info.plist:
+   - Open GoogleService-Info.plist
+   - Copy the REVERSED_CLIENT_ID value
+   - Add this to Info.plist:
+   
+   <key>CFBundleURLTypes</key>
+   <array>
+       <dict>
+           <key>CFBundleURLName</key>
+           <string>com.mvpauth</string>
+           <key>CFBundleURLSchemes</key>
+           <array>
+               <string>YOUR_REVERSED_CLIENT_ID_HERE</string>
+           </array>
+       </dict>
+   </array>
+
+===============================================================================
+STEP 9: INSTALL DEPENDENCIES
+===============================================================================
+
+Run these commands in your project root:
+
+npm install
+
+For iOS:
+cd ios && pod install && cd ..
+
+===============================================================================
+STEP 10: TEST YOUR SETUP
+===============================================================================
+
+1. Start Metro bundler:
+   npm start
+
+2. Run on iOS:
+   npm run ios
+
+3. Run on Android:
+   npm run android
+
+4. Test each authentication method:
+   - Email/Password signup
+   - Email/Password login
+   - Google Sign-In
+   - Apple Sign-In (iOS only)
+   - Password reset
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+COMMON ISSUES:
+
+1. "Google Sign-In configuration error"
+   - Check that webClientId in AuthContext.tsx matches Firebase
+   - Verify google-services.json/GoogleService-Info.plist are in correct locations
+
+2. "Apple Sign-In not working"
+   - Ensure Apple Sign-In is enabled in Apple Developer account
+   - Check bundle ID matches in Firebase and Xcode
+
+3. "Email authentication not working"
+   - Verify Email/Password is enabled in Firebase console
+   - Check Firebase project settings
+
+4. "App crashes on startup"
+   - Ensure Firebase config files are properly added
+   - Check that bundle IDs match everywhere
+
+5. "Google Sign-In shows 'Developer Error'"
+   - Wrong webClientId in code
+   - SHA-1 fingerprint missing (for release builds)
+
+DEBUG STEPS:
+1. Check React Native logs: npx react-native log-android or npx react-native log-ios
+2. Check Firebase console for authentication events
+3. Verify all package names/bundle IDs match
+4. Ensure all required dependencies are installed
+
+===============================================================================
+PRODUCTION CONSIDERATIONS
+===============================================================================
+
+Before going to production:
+
+1. Add SHA-1 fingerprints for Android release builds
+2. Configure proper Apple Developer Team settings
+3. Set up proper OAuth redirect URIs
+4. Enable App Check for security
+5. Configure authentication domain whitelist
+6. Set up proper error handling and user feedback
+7. Add proper privacy policy and terms of service
+
+===============================================================================
+SECURITY NOTES
+===============================================================================
+
+- Never commit google-services.json or GoogleService-Info.plist to version control
+- Add these files to your .gitignore
+- Use different Firebase projects for development and production
+- Regularly review authentication logs in Firebase console
+- Enable multi-factor authentication for Firebase console access
+
+===============================================================================
+SUPPORT RESOURCES
+===============================================================================
+
+- Firebase Documentation: https://firebase.google.com/docs
+- React Native Firebase: https://rnfirebase.io/
+- Google Sign-In: https://developers.google.com/identity
+- Apple Sign-In: https://developer.apple.com/sign-in-with-apple/
+
+For issues with this setup, check:
+1. Firebase console error logs
+2. React Native debugger
+3. Android Studio logcat
+4. Xcode debug console
+
+===============================================================================
