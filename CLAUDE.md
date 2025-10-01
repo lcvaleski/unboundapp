@@ -1,12 +1,12 @@
-# MVP Fresh - AI Assistant Context
+# Unbound App - AI Assistant Context
 
 ## 🚀 Project Overview
 
-**Project**: MVP Fresh - React Native Mobile App
+**Project**: Unbound App - React Native Mobile App
 **Type**: Cross-platform (iOS & Android)
 **Status**: Active Development - Working State
 **Architecture**: React Native New Architecture (Fabric/TurboModules enabled)
-**Last Updated**: September 30, 2024
+**Last Updated**: October 1, 2025
 
 ### Tech Stack
 - **React Native**: 0.81.4 (Latest stable)
@@ -16,6 +16,7 @@
 - **Navigation**: React Navigation 6.x
 - **State Management**: React Context API
 - **Package Manager**: npm
+- **Data Persistence**: AsyncStorage
 
 ### Important Architecture Decisions
 - **UI Components**: Using native TextInput directly (no custom wrappers)
@@ -33,8 +34,12 @@
 - ✅ Firebase Analytics integration
 - ✅ Crashlytics for error reporting
 - ✅ Login/Signup screens with working text inputs
-- ✅ Home screen with sign out
+- ✅ Home screen with sign out and onboarding preview
 - ✅ Profile screen placeholder
+- ✅ Onboarding flow with 6 slides
+- ✅ Fade in/out text animations
+- ✅ AsyncStorage for onboarding completion tracking
+- ✅ Preview onboarding from home screen
 
 ### Planned Features
 - [ ] User profile management
@@ -46,26 +51,32 @@
 ## 🏗️ Project Structure
 
 ```
-mvp_fresh/
+unboundapp/
 ├── src/
 │   ├── screens/           # Screen components
 │   │   ├── auth/          # Authentication screens
 │   │   ├── onboarding/    # Onboarding flow
-│   │   └── main/          # Main app screens
+│   │   │   └── OnboardingScreen.tsx
+│   │   ├── HomeScreen.tsx
+│   │   └── ProfileScreen.tsx
 │   ├── navigation/        # Navigation setup
 │   │   ├── RootNavigator.tsx
-│   │   ├── AuthNavigator.tsx
-│   │   └── MainNavigator.tsx
+│   │   ├── AuthStack.tsx
+│   │   ├── MainStack.tsx
+│   │   └── types.ts
 │   ├── contexts/          # React contexts
 │   │   └── AuthContext.tsx
+│   ├── design-system/     # Design system components
+│   │   ├── components/
+│   │   └── theme/
 │   ├── components/        # Reusable components
 │   ├── hooks/            # Custom hooks
 │   ├── utils/            # Utility functions
 │   └── types/            # TypeScript types
 ├── ios/                  # iOS native code
 │   ├── Podfile          # CocoaPods dependencies
-│   ├── mvp_fresh.xcworkspace
-│   └── mvp_fresh/
+│   ├── unboundapp.xcworkspace
+│   └── unboundapp/
 │       ├── AppDelegate.swift
 │       ├── Info.plist
 │       └── GoogleService-Info.plist
@@ -90,14 +101,16 @@ mvp_fresh/
 - ✅ Native initialization configured
 
 ### iOS Firebase Setup
-- **Location**: `/ios/mvp_fresh/AppDelegate.swift`
+- **Location**: `/ios/unboundapp/AppDelegate.swift`
 - **Method**: Manual initialization with `Firebase.configure()`
 - **SDK Version**: Firebase iOS SDK 12.3.0
+- **Bundle Identifier**: `com.unboundapp`
 
 ### Android Firebase Setup
 - **Location**: `/android/app/build.gradle`
 - **Method**: Auto-initialization via Google Services plugin
 - **Plugin**: `com.google.gms.google-services`
+- **Package Name**: `com.unboundapp`
 
 ### Firebase Services
 ```typescript
@@ -160,10 +173,10 @@ cd ios && pod install && cd ..
 ### Build Commands
 ```bash
 # iOS Debug build
-cd ios && xcodebuild -workspace mvp_fresh.xcworkspace -scheme mvp_fresh -configuration Debug -sdk iphonesimulator
+cd ios && xcodebuild -workspace unboundapp.xcworkspace -scheme unboundapp -configuration Debug -sdk iphonesimulator
 
 # iOS Release build
-cd ios && xcodebuild -workspace mvp_fresh.xcworkspace -scheme mvp_fresh -configuration Release -sdk iphoneos
+cd ios && xcodebuild -workspace unboundapp.xcworkspace -scheme unboundapp -configuration Release -sdk iphoneos
 
 # Android Debug build
 cd android && ./gradlew assembleDebug
@@ -256,6 +269,13 @@ cd android && ./gradlew assembleRelease
 }
 ```
 
+### Data Storage
+```json
+{
+  "@react-native-async-storage/async-storage": "^2.1.0"
+}
+```
+
 ## 🎯 Development Guidelines
 
 ### Code Style
@@ -330,17 +350,63 @@ ENVIRONMENT=development
 - [React Navigation](https://reactnavigation.org/)
 - [Firebase Console](https://console.firebase.google.com/)
 
+## 📱 Onboarding Feature
+
+### Overview
+The app includes a comprehensive onboarding flow for new users, featuring 6 slides with messaging about phone addiction and digital wellness.
+
+### Implementation Details
+- **Location**: `/src/screens/onboarding/OnboardingScreen.tsx`
+- **Navigation**: Integrated into `RootNavigator` and `MainStack`
+- **Persistence**: Uses AsyncStorage to track completion
+- **Animation**: Fade in/out text transitions (600ms out, 800ms in)
+- **Styling**: Black text on white background, consistent with app design
+
+### Onboarding Content
+1. "You've been mislead about your phone addiction."
+2. "It's no secret that phones are making us less happy."
+3. "But the solutions you've been sold don't last."
+4. "App blockers don't work—you just end up bypassing them."
+5. "What we need is a fundamental change from within."
+6. "Your journey to a healthier relationship with your phone begins now."
+
+### Features
+- **First-time display**: Shows automatically for new users
+- **Progress indicators**: Pagination dots showing current slide
+- **Next/Get Started button**: Advances through slides
+- **No skip option**: Users must complete all slides
+- **Preview mode**: Can be accessed from Home screen without affecting stored preference
+
+### Technical Implementation
+```typescript
+// Check onboarding status
+const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
+
+// Mark as complete
+await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+
+// Fade animation
+Animated.timing(fadeAnim, {
+  toValue: 0,
+  duration: 600,
+  useNativeDriver: true,
+})
+```
+
 ## 🚨 Important Notes
 
-1. **Firebase Config Files**: The `GoogleService-Info.plist` and `google-services.json` files are safe to commit to git as they only contain public identifiers
-2. **iOS Build**: Always use `.xcworkspace` file, not `.xcodeproj`
-3. **Pods**: Run `pod install` after any native dependency changes
-4. **Metro**: Keep Metro bundler terminal open while developing
-5. **Type Safety**: Leverage TypeScript for all new code
-6. **Text Inputs**: Use native TextInput directly - avoid complex wrappers or animated labels
-7. **Auth Screens**: Don't use KeyboardAvoidingView or ScrollView - they cause focus issues
-8. **Gesture Handler**: Must import 'react-native-gesture-handler' at top of index.js
-9. **Design System**: Keep it simple - white backgrounds, black text, minimal styling
+1. **App Identity**: This app was forked from mvp_fresh and renamed to unboundapp
+2. **Bundle Identifier**: iOS uses `com.unboundapp`, Android uses `com.unboundapp`
+3. **Firebase Config Files**: The `GoogleService-Info.plist` and `google-services.json` files are safe to commit to git as they only contain public identifiers
+4. **iOS Build**: Always use `.xcworkspace` file, not `.xcodeproj`
+5. **Pods**: Run `pod install` after any native dependency changes
+6. **Metro**: Keep Metro bundler terminal open while developing
+7. **Type Safety**: Leverage TypeScript for all new code
+8. **Text Inputs**: Use native TextInput directly - avoid complex wrappers or animated labels
+9. **Auth Screens**: Don't use KeyboardAvoidingView or ScrollView - they cause focus issues
+10. **Gesture Handler**: Must import 'react-native-gesture-handler' at top of index.js
+11. **Design System**: Keep it simple - white backgrounds, black text, minimal styling
+12. **Onboarding**: AsyncStorage must be installed for onboarding tracking to work
 
 ## 🔮 Future Improvements
 
@@ -632,6 +698,16 @@ grep -r "com.mvpfresh" android/
 ---
 
 ## 📋 Recent Changes Log
+
+### October 1, 2025
+- **App Renaming**: Forked from mvp_fresh and renamed to unboundapp
+- **Bundle Identifiers**: Updated to com.unboundapp for both iOS and Android
+- **Firebase Configuration**: Updated GoogleService-Info.plist and google-services.json
+- **Onboarding Feature**: Implemented 6-slide onboarding flow with fade animations
+- **AsyncStorage Integration**: Added for tracking onboarding completion
+- **Navigation Updates**: Added onboarding to RootNavigator and MainStack
+- **Home Screen**: Added "View Onboarding" button for preview functionality
+- **Documentation**: Updated CLAUDE.md to reflect current app state
 
 ### September 30, 2024
 - Fixed text input focus jumping issues by removing KeyboardAvoidingView

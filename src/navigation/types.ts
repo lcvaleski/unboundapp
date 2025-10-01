@@ -1,6 +1,7 @@
 export type RootStackParamList = {
   AuthStack: undefined;
   MainStack: undefined;
+  Onboarding: undefined;
 };
 
 export type AuthStackParamList = {
@@ -13,4 +14,5 @@ export type AuthStackParamList = {
 export type MainStackParamList = {
   Home: undefined;
   Profile: undefined;
+  Onboarding: undefined;
 };

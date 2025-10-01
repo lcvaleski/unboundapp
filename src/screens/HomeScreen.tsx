@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../design-system/components/Button';
 import { colors, typography, spacing } from '../design-system/theme';
 
 export const HomeScreen = () => {
   const { user, signOut } = useAuth();
+  const navigation = useNavigation<any>();
 
   const handleSignOut = async () => {
     try {
@@ -13,6 +15,11 @@ export const HomeScreen = () => {
     } catch (error) {
       console.error('Sign out error:', error);
     }
+  };
+
+  const handleViewOnboarding = () => {
+    // Navigate to onboarding without changing the stored preference
+    navigation.navigate('Onboarding');
   };
 
   return (
@@ -27,11 +34,18 @@ export const HomeScreen = () => {
         
         <View style={styles.actions}>
           <Button
+            title="View Onboarding"
+            onPress={handleViewOnboarding}
+            variant="primary"
+            size="large"
+            style={styles.button}
+          />
+          <Button
             title="Sign Out"
             onPress={handleSignOut}
             variant="secondary"
             size="large"
-            style={styles.signOutButton}
+            style={styles.button}
           />
         </View>
       </View>
@@ -72,7 +86,8 @@ const styles = StyleSheet.create({
   actions: {
     width: '100%',
   },
-  signOutButton: {
+  button: {
     width: '100%',
+    marginBottom: spacing.md,
   },
 });
