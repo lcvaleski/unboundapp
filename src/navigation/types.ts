@@ -12,7 +12,6 @@ export type AuthStackParamList = {
 };
 
 export type MainStackParamList = {
-  Home: undefined;
-  Profile: undefined;
+  MainTabs: undefined;
   Onboarding: undefined;
 };
