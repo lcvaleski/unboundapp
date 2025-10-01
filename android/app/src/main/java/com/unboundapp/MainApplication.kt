@@ -1,4 +1,4 @@
-package com.mvpfresh
+package com.unboundapp
 
 import android.app.Application
 import com.facebook.react.PackageList

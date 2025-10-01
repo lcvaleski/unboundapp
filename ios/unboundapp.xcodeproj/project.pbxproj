@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		23BB69B053ABBFE0CE7FC6ED /* Pods_mvp_fresh.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8E3881C27FD10D68C0C5A7E /* Pods_mvp_fresh.framework */; };
+		216E96253F353B2BCAE6CE38 /* Pods_unboundapp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8BFD243344FD23AB0DB2786 /* Pods_unboundapp.framework */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9497C66C36954D74C299A6A3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 98620F2F086E2389492660C1 /* GoogleService-Info.plist */; };
@@ -17,17 +17,19 @@
 
 /* Begin PBXFileReference section */
 		02D7D2B2F2D078C39AD0F648 /* Pods-mvp_fresh.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mvp_fresh.debug.xcconfig"; path = "Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* mvp_fresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mvp_fresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mvp_fresh/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mvp_fresh/Info.plist; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = mvp_fresh/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		1A5615892E888EC00019C1A3 /* mvp_fresh.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mvp_fresh.entitlements; path = mvp_fresh/mvp_fresh.entitlements; sourceTree = "<group>"; };
-		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = mvp_fresh/AppDelegate.swift; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = mvp_fresh/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		98620F2F086E2389492660C1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "mvp_fresh/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* unboundapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = unboundapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = unboundapp/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = unboundapp/Info.plist; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = unboundapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1A5615892E888EC00019C1A3 /* unboundapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = unboundapp.entitlements; path = unboundapp/unboundapp.entitlements; sourceTree = "<group>"; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = unboundapp/AppDelegate.swift; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = unboundapp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		98620F2F086E2389492660C1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "unboundapp/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A8BFD243344FD23AB0DB2786 /* Pods_unboundapp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_unboundapp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C55CE9264A3777625898B388 /* Pods-unboundapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-unboundapp.debug.xcconfig"; path = "Target Support Files/Pods-unboundapp/Pods-unboundapp.debug.xcconfig"; sourceTree = "<group>"; };
+		C5B52719526744B81484BD43 /* Pods-unboundapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-unboundapp.release.xcconfig"; path = "Target Support Files/Pods-unboundapp/Pods-unboundapp.release.xcconfig"; sourceTree = "<group>"; };
 		DBDA528BA79C19E1D8F15C0F /* Pods-mvp_fresh.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mvp_fresh.release.xcconfig"; path = "Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F8E3881C27FD10D68C0C5A7E /* Pods_mvp_fresh.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mvp_fresh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,17 +37,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				23BB69B053ABBFE0CE7FC6ED /* Pods_mvp_fresh.framework in Frameworks */,
+				216E96253F353B2BCAE6CE38 /* Pods_unboundapp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* mvp_fresh */ = {
+		13B07FAE1A68108700A75B9A /* unboundapp */ = {
 			isa = PBXGroup;
 			children = (
-				1A5615892E888EC00019C1A3 /* mvp_fresh.entitlements */,
+				1A5615892E888EC00019C1A3 /* unboundapp.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -53,14 +55,14 @@
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				98620F2F086E2389492660C1 /* GoogleService-Info.plist */,
 			);
-			name = mvp_fresh;
+			name = unboundapp;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				F8E3881C27FD10D68C0C5A7E /* Pods_mvp_fresh.framework */,
+				A8BFD243344FD23AB0DB2786 /* Pods_unboundapp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -75,7 +77,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* mvp_fresh */,
+				13B07FAE1A68108700A75B9A /* unboundapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -89,7 +91,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* mvp_fresh.app */,
+				13B07F961A680F5B00A75B9A /* unboundapp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +101,8 @@
 			children = (
 				02D7D2B2F2D078C39AD0F648 /* Pods-mvp_fresh.debug.xcconfig */,
 				DBDA528BA79C19E1D8F15C0F /* Pods-mvp_fresh.release.xcconfig */,
+				C55CE9264A3777625898B388 /* Pods-unboundapp.debug.xcconfig */,
+				C5B52719526744B81484BD43 /* Pods-unboundapp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -106,9 +110,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* mvp_fresh */ = {
+		13B07F861A680F5B00A75B9A /* unboundapp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "mvp_fresh" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "unboundapp" */;
 			buildPhases = (
 				D9B0B98B80FE6400A895A8C4 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -124,9 +128,9 @@
 			);
 			dependencies = (
 			);
-			name = mvp_fresh;
-			productName = mvp_fresh;
-			productReference = 13B07F961A680F5B00A75B9A /* mvp_fresh.app */;
+			name = unboundapp;
+			productName = unboundapp;
+			productReference = 13B07F961A680F5B00A75B9A /* unboundapp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -142,7 +146,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "mvp_fresh" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "unboundapp" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -155,7 +159,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* mvp_fresh */,
+				13B07F861A680F5B00A75B9A /* unboundapp */,
 			);
 		};
 /* End PBXProject section */
@@ -197,15 +201,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-unboundapp/Pods-unboundapp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-unboundapp/Pods-unboundapp-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-unboundapp/Pods-unboundapp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6BDF139C200926A3AEB28A5E /* [CP-User] [RNFB] Core Configuration */ = {
@@ -236,7 +240,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-mvp_fresh-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-unboundapp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -263,15 +267,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-unboundapp/Pods-unboundapp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-unboundapp/Pods-unboundapp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mvp_fresh/Pods-mvp_fresh-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-unboundapp/Pods-unboundapp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -290,15 +294,15 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 02D7D2B2F2D078C39AD0F648 /* Pods-mvp_fresh.debug.xcconfig */;
+			baseConfigurationReference = C55CE9264A3777625898B388 /* Pods-unboundapp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = mvp_fresh/mvp_fresh.entitlements;
+				CODE_SIGN_ENTITLEMENTS = unboundapp/unboundapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F2S9M6EX9E;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = mvp_fresh/Info.plist;
+				INFOPLIST_FILE = unboundapp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -310,8 +314,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = mvp_fresh;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unboundapp;
+				PRODUCT_NAME = unboundapp;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -320,14 +324,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBDA528BA79C19E1D8F15C0F /* Pods-mvp_fresh.release.xcconfig */;
+			baseConfigurationReference = C5B52719526744B81484BD43 /* Pods-unboundapp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = mvp_fresh/mvp_fresh.entitlements;
+				CODE_SIGN_ENTITLEMENTS = unboundapp/unboundapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F2S9M6EX9E;
-				INFOPLIST_FILE = mvp_fresh/Info.plist;
+				INFOPLIST_FILE = unboundapp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -339,8 +343,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = mvp_fresh;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unboundapp;
+				PRODUCT_NAME = unboundapp;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -519,7 +523,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "mvp_fresh" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "unboundapp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -528,7 +532,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "mvp_fresh" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "unboundapp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

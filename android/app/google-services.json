@@ -1,48 +1,48 @@
 {
   "project_info": {
-    "project_number": "560802312497",
-    "project_id": "mvp-fresh-609a2",
-    "storage_bucket": "mvp-fresh-609a2.firebasestorage.app"
+    "project_number": "1087021011695",
+    "project_id": "unboundapp-2a86c",
+    "storage_bucket": "unboundapp-2a86c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:560802312497:android:5987abb0ecb8b603bf8010",
+        "mobilesdk_app_id": "1:1087021011695:android:e62b5435f951b227aa011a",
         "android_client_info": {
-          "package_name": "com.mvpfresh"
+          "package_name": "com.unboundapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "560802312497-76fhbe4n2sepc55999sqqpa7lakltq7r.apps.googleusercontent.com",
+          "client_id": "1087021011695-bbs1qhorcjof910r139a9qnuqc6qntfm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.mvpfresh",
+            "package_name": "com.unboundapp",
             "certificate_hash": "80807e75a7c16048a590d45a07cc6bccfa3d7f7c"
           }
         },
         {
-          "client_id": "560802312497-o8cumlo0nrvnnpnj79gih6q3e3badtf4.apps.googleusercontent.com",
+          "client_id": "1087021011695-iqsjica60kluptq61agujpsdu7uo65m8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCO9Kr-M6Ue4c2ow4YkJoU5gp2l20pbMZs"
+          "current_key": "AIzaSyBFLWEtBkhwlg3-WyI9wEW28LqM74OZzeE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "560802312497-o8cumlo0nrvnnpnj79gih6q3e3badtf4.apps.googleusercontent.com",
+              "client_id": "1087021011695-iqsjica60kluptq61agujpsdu7uo65m8.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "560802312497-120rb40t3cgtbqbtl4fkq3u34im9orrf.apps.googleusercontent.com",
+              "client_id": "1087021011695-77hhckl9g6mugsigs5j8i6su7lcfc0ki.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.reactjs.native.example.mvp-fresh"
+                "bundle_id": "com.unboundapp"
               }
             }
           ]

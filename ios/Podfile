@@ -16,7 +16,7 @@ use_modular_headers!
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
 
-target 'mvp_fresh' do
+target 'unboundapp' do
   config = use_native_modules!
 
   use_react_native!(
