@@ -22,7 +22,7 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    subtitle: "You've been mislead about your phone addiction.",
+    subtitle: "You've been misled about your phone addiction.",
     backgroundColor: '#FFFFFF',
   },
   {
