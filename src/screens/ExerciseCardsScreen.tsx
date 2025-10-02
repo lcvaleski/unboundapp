@@ -9,10 +9,12 @@ import {
   ScrollView,
   Dimensions,
   Animated,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, typography } from '../design-system/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Sound from 'react-native-nitro-sound';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -105,6 +107,7 @@ export const ExerciseCardsScreen = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [journalText, setJournalText] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const ITEM_HEIGHT = screenHeight * 0.8;
 
@@ -128,6 +131,28 @@ export const ExerciseCardsScreen = () => {
     }
     await AsyncStorage.setItem('hasCompletedExercise', 'true');
     navigation.goBack();
+  };
+
+  const handleStartRecording = async () => {
+    try {
+      const result = await Sound.startRecorder();
+      console.log('Recording started:', result);
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+    }
+  };
+
+  const handleStopRecording = async () => {
+    try {
+      const result = await Sound.stopRecorder();
+      console.log('Recording stopped, file path:', result);
+      setIsRecording(false);
+      // For now, just log the result
+      // Later we'll send this to transcription API
+    } catch (error) {
+      console.error('Failed to stop recording:', error);
+    }
   };
 
   // All cards are overlaid at the same position
@@ -199,10 +224,21 @@ export const ExerciseCardsScreen = () => {
                   maxLength={500}
                 />
                 <TouchableOpacity
-                  style={[styles.microphoneButton, { borderColor: textColor }]}
-                  onPress={() => console.log('Microphone pressed!')}
+                  style={[styles.microphoneButton, {
+                    borderColor: textColor,
+                    backgroundColor: isRecording ? 'rgba(255, 0, 0, 0.1)' : 'transparent'
+                  }]}
+                  onPress={() => {
+                    if (isRecording) {
+                      handleStopRecording();
+                    } else {
+                      handleStartRecording();
+                    }
+                  }}
                 >
-                  <Text style={[styles.microphoneIcon, { color: textColor }]}>🎙️</Text>
+                  <Text style={[styles.microphoneIcon, { color: isRecording ? '#ff0000' : textColor }]}>
+                    {isRecording ? '⏹️' : '🎙️'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
