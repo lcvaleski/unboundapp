@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, typography } from '../design-system/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Sound from 'react-native-nitro-sound';
+import { ENDPOINTS } from '../config/api';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -174,8 +175,8 @@ export const ExerciseCardsScreen = () => {
         name: 'recording.m4a',
       } as any);
 
-      // Send to backend (adjust URL for your setup)
-      const response = await fetch('http://localhost:3000/transcribe', {
+      // Send to backend
+      const response = await fetch(ENDPOINTS.transcribe, {
         method: 'POST',
         body: formData,
         headers: {
