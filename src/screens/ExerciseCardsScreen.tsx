@@ -177,23 +177,34 @@ export const ExerciseCardsScreen = () => {
               transform: [{ translateY }]
             }
           ]}
-          pointerEvents={currentIndex === index ? 'auto' : 'none'}
+          pointerEvents={currentIndex === index ? 'box-none' : 'none'}
         >
+          {isInverted && currentIndex === index && (
+            <View style={styles.invertedBackground} pointerEvents="none" />
+          )}
           <Text style={[styles.cardText, { color: textColor }]}>
             {card.content}
           </Text>
 
           {card.hasJournal && currentIndex === index && (
             <View style={styles.journalContainer}>
-              <TextInput
-                style={[styles.journalInput, { color: textColor, borderColor: textColor }]}
-                placeholder="Write your reflection here..."
-                placeholderTextColor={isInverted ? '#999' : '#666'}
-                multiline
-                value={journalText}
-                onChangeText={setJournalText}
-                maxLength={500}
-              />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.journalInput, { color: textColor, borderColor: textColor }]}
+                  placeholder="Write your reflection here..."
+                  placeholderTextColor={isInverted ? '#999' : '#666'}
+                  multiline
+                  value={journalText}
+                  onChangeText={setJournalText}
+                  maxLength={500}
+                />
+                <TouchableOpacity
+                  style={[styles.microphoneButton, { borderColor: textColor }]}
+                  onPress={() => console.log('Microphone pressed!')}
+                >
+                  <Text style={[styles.microphoneIcon, { color: textColor }]}>🎙️</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
 
@@ -304,8 +315,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: colors.primary.black,
     justifyContent: 'center',
+  },
+  invertedBackground: {
+    position: 'absolute',
+    top: -screenHeight,
+    left: -screenWidth,
+    right: -screenWidth,
+    bottom: -screenHeight,
+    backgroundColor: colors.primary.black,
   },
   scrollView: {
     flex: 1,
@@ -325,14 +343,31 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 350,
   },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+  },
   journalInput: {
+    flex: 1,
     borderWidth: 1,
     borderRadius: 12,
     padding: spacing.md,
     minHeight: 120,
     fontSize: typography.fontSize.md,
     textAlignVertical: 'top',
-    width: '100%',
+  },
+  microphoneButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  microphoneIcon: {
+    fontSize: 24,
   },
   completeButton: {
     marginTop: spacing.xl,

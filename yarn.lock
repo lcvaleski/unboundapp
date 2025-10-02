@@ -2005,6 +2005,11 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
+"@react-native-community/slider@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.npmjs.org/@react-native-community/slider/-/slider-5.0.1.tgz"
+  integrity sha512-K3JRWkIW4wQ79YJ6+BPZzp1SamoikxfPRw7Yw4B4PElEQmqZFrmH9M5LxvIo460/3QSrZF/wCgi3qizJt7g/iw==
+
 "@react-native-firebase/analytics@^23.4.0":
   version "23.4.0"
   resolved "https://registry.npmjs.org/@react-native-firebase/analytics/-/analytics-23.4.0.tgz"
@@ -6219,6 +6224,18 @@ react-native-linear-gradient@^2.8.3:
   version "2.8.3"
   resolved "https://registry.npmjs.org/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz"
   integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
+
+react-native-nitro-modules@*, react-native-nitro-modules@^0.29.8:
+  version "0.29.8"
+  resolved "https://registry.npmjs.org/react-native-nitro-modules/-/react-native-nitro-modules-0.29.8.tgz"
+  integrity sha512-SyKIR+MmAZadqFEPwD+wiHoG5Lem3EMtAyzLOJ+mU0JB+1+vHxxLLhcV0THoXoxbMSbf5zWOQYVb+JPCEhNtXg==
+
+react-native-nitro-sound@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.npmjs.org/react-native-nitro-sound/-/react-native-nitro-sound-0.2.8.tgz"
+  integrity sha512-cKIdCsWvH8uGLI/xBilKE7/pkQ4nINJMsmB5ftXsO4V+9kB5R9D4tVS/TFv6j14mi8yEntFMz36rcwcLjoaKyQ==
+  dependencies:
+    "@react-native-community/slider" "^5.0.1"
 
 react-native-safe-area-context@^5.6.1, "react-native-safe-area-context@>= 3.0.0":
   version "5.6.1"
