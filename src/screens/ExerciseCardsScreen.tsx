@@ -153,10 +153,49 @@ export const ExerciseCardsScreen = () => {
       const result = await Sound.stopRecorder();
       console.log('Recording stopped, file path:', result);
       setIsRecording(false);
-      // For now, just log the result
-      // Later we'll send this to transcription API
+
+      // Send to transcription API
+      await transcribeAudio(result);
     } catch (error) {
       console.error('Failed to stop recording:', error);
+      Alert.alert('Recording Error', 'Failed to stop recording');
+    }
+  };
+
+  const transcribeAudio = async (audioPath: string) => {
+    try {
+      console.log('Transcribing audio from:', audioPath);
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('audio', {
+        uri: Platform.OS === 'ios' ? audioPath : `file://${audioPath}`,
+        type: 'audio/m4a',
+        name: 'recording.m4a',
+      } as any);
+
+      // Send to backend (adjust URL for your setup)
+      const response = await fetch('http://localhost:3000/transcribe', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log('Transcription result:', data.text);
+        // Update journal text with transcription
+        setJournalText(data.text);
+        setModalText(data.text);
+      } else {
+        throw new Error(data.message || 'Transcription failed');
+      }
+    } catch (error) {
+      console.error('Transcription error:', error);
+      Alert.alert('Transcription Error', 'Failed to transcribe audio. Please try again.');
     }
   };
 
@@ -250,6 +289,14 @@ export const ExerciseCardsScreen = () => {
                   </Text>
                 </TouchableOpacity>
               </View>
+
+              {journalText ? (
+                <View style={styles.transcriptionContainer}>
+                  <Text style={[styles.transcriptionText, { color: textColor }]}>
+                    {journalText}
+                  </Text>
+                </View>
+              ) : null}
             </View>
           )}
 
@@ -593,5 +640,21 @@ const styles = StyleSheet.create({
     color: colors.primary.black,
     textAlignVertical: 'top',
     padding: spacing.md,
+  },
+  // Transcription display
+  transcriptionContainer: {
+    marginTop: spacing.xl,
+    padding: spacing.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    maxWidth: 350,
+    width: '100%',
+  },
+  transcriptionText: {
+    fontSize: typography.fontSize.md,
+    lineHeight: typography.lineHeight.md * 1.4,
+    textAlign: 'center',
   },
 });
