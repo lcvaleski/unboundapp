@@ -114,6 +114,8 @@ export const ExerciseCardsScreen = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [modalText, setModalText] = useState('');
+  const [aiAnalysis, setAiAnalysis] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const ITEM_HEIGHT = screenHeight * 0.8;
 
@@ -163,6 +165,44 @@ export const ExerciseCardsScreen = () => {
     }
   };
 
+  const analyzeTranscription = async (transcription: string) => {
+    try {
+      console.log('Getting AI analysis...');
+      setIsAnalyzing(true);
+      setAiAnalysis(''); // Clear any previous analysis
+
+      // Get exercise cards up to the journal card (card 9)
+      const exerciseCards = cards
+        .slice(0, 9)
+        .map(card => card.content);
+
+      const response = await fetch(ENDPOINTS.analyze, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          transcription,
+          exerciseCards,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log('AI Analysis:', data.analysis);
+        setAiAnalysis(data.analysis);
+      } else {
+        console.error('Analysis failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Analysis error:', error);
+      // Don't show alert - analysis is optional enhancement
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const transcribeAudio = async (audioPath: string) => {
     try {
       console.log('Transcribing audio from:', audioPath);
@@ -191,6 +231,9 @@ export const ExerciseCardsScreen = () => {
         // Update journal text with transcription
         setJournalText(data.text);
         setModalText(data.text);
+
+        // Now get AI analysis
+        await analyzeTranscription(data.text);
       } else {
         throw new Error(data.message || 'Transcription failed');
       }
@@ -296,6 +339,13 @@ export const ExerciseCardsScreen = () => {
                   <Text style={[styles.transcriptionText, { color: textColor }]}>
                     {journalText}
                   </Text>
+                  {(isAnalyzing || aiAnalysis) ? (
+                    <View style={styles.analysisContainer}>
+                      <Text style={[styles.analysisText, { color: textColor }]}>
+                        {isAnalyzing ? 'Analyzing your reflection...' : aiAnalysis}
+                      </Text>
+                    </View>
+                  ) : null}
                 </View>
               ) : null}
             </View>
@@ -377,9 +427,14 @@ export const ExerciseCardsScreen = () => {
             <Text style={styles.modalTitle}>Type Your Reflection</Text>
             <TouchableOpacity
               style={styles.modalDoneButton}
-              onPress={() => {
+              onPress={async () => {
                 setJournalText(modalText);
                 setShowTypeModal(false);
+                // Get AI analysis for typed text too
+                if (modalText.trim()) {
+                  // Don't await here so modal closes immediately
+                  analyzeTranscription(modalText);
+                }
               }}
             >
               <Text style={styles.modalDoneText}>Done</Text>
@@ -657,5 +712,18 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.md,
     lineHeight: typography.lineHeight.md * 1.4,
     textAlign: 'center',
+  },
+  analysisContainer: {
+    marginTop: spacing.lg,
+    paddingTop: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: colors.neutral.gray300,
+  },
+  analysisText: {
+    fontSize: typography.fontSize.sm,
+    lineHeight: typography.lineHeight.sm * 1.4,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    opacity: 0.8,
   },
 });
