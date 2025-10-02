@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import OnboardingScreen from '../screens/onboarding/OnboardingScreen';
+import { ExerciseCardsScreen } from '../screens/ExerciseCardsScreen';
 import { MainTabs } from './MainTabs';
 import { MainStackParamList } from './types';
 
@@ -18,6 +19,14 @@ export function MainStack() {
       <Stack.Screen name="Onboarding">
         {(props) => <OnboardingScreen {...props} onComplete={() => props.navigation.goBack()} />}
       </Stack.Screen>
+      <Stack.Screen
+        name="ExerciseCards"
+        component={ExerciseCardsScreen}
+        options={{
+          presentation: 'modal',
+          gestureEnabled: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }

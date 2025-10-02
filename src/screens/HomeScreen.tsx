@@ -12,14 +12,25 @@ export const HomeScreen = () => {
     navigation.navigate('Onboarding');
   };
 
+  const handleStartExercise = () => {
+    navigation.navigate('ExerciseCards');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.actions}>
           <Button
+            title="Start Phone Awareness Exercise"
+            onPress={handleStartExercise}
+            variant="primary"
+            size="large"
+            style={styles.button}
+          />
+          <Button
             title="View Onboarding"
             onPress={handleViewOnboarding}
-            variant="primary"
+            variant="secondary"
             size="large"
             style={styles.button}
           />
