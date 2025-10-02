@@ -10,6 +10,9 @@ import {
   Dimensions,
   Animated,
   Platform,
+  Alert,
+  Modal,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { colors, spacing, typography } from '../design-system/theme';
@@ -108,6 +111,8 @@ export const ExerciseCardsScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [journalText, setJournalText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [showTypeModal, setShowTypeModal] = useState(false);
+  const [modalText, setModalText] = useState('');
   const scrollY = useRef(new Animated.Value(0)).current;
   const ITEM_HEIGHT = screenHeight * 0.8;
 
@@ -213,31 +218,35 @@ export const ExerciseCardsScreen = () => {
 
           {card.hasJournal && currentIndex === index && (
             <View style={styles.journalContainer}>
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={[styles.journalInput, { color: textColor, borderColor: textColor }]}
-                  placeholder="Write your reflection here..."
-                  placeholderTextColor={isInverted ? '#999' : '#666'}
-                  multiline
-                  value={journalText}
-                  onChangeText={setJournalText}
-                  maxLength={500}
-                />
+              <View style={styles.inputModeContainer}>
                 <TouchableOpacity
-                  style={[styles.microphoneButton, {
-                    borderColor: textColor,
-                    backgroundColor: isRecording ? 'rgba(255, 0, 0, 0.1)' : 'transparent'
-                  }]}
+                  style={[
+                    styles.modeButton,
+                    styles.dictateButton,
+                    isRecording && styles.modeButtonRecording,
+                  ]}
                   onPress={() => {
-                    if (isRecording) {
-                      handleStopRecording();
-                    } else {
+                    if (!isRecording) {
                       handleStartRecording();
+                    } else {
+                      handleStopRecording();
                     }
                   }}
                 >
-                  <Text style={[styles.microphoneIcon, { color: isRecording ? '#ff0000' : textColor }]}>
-                    {isRecording ? '⏹️' : '🎙️'}
+                  <Text style={styles.dictateButtonText}>
+                    {isRecording ? 'Recording...' : 'Dictate'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.modeButton}
+                  onPress={() => {
+                    setModalText(journalText);
+                    setShowTypeModal(true);
+                  }}
+                >
+                  <Text style={styles.modeButtonText}>
+                    Type
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -302,6 +311,48 @@ export const ExerciseCardsScreen = () => {
           />
         </View>
       </View>
+
+      <Modal
+        visible={showTypeModal}
+        animationType="slide"
+        transparent={false}
+        onRequestClose={() => setShowTypeModal(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setShowTypeModal(false)}
+            >
+              <Text style={styles.modalCloseText}>Cancel</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Type Your Reflection</Text>
+            <TouchableOpacity
+              style={styles.modalDoneButton}
+              onPress={() => {
+                setJournalText(modalText);
+                setShowTypeModal(false);
+              }}
+            >
+              <Text style={styles.modalDoneText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+          <KeyboardAvoidingView
+            style={styles.modalContent}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <TextInput
+              style={styles.modalTextInput}
+              placeholder="What came up for you in that one minute?"
+              placeholderTextColor="#999"
+              multiline
+              value={modalText}
+              onChangeText={setModalText}
+              autoFocus
+            />
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -375,35 +426,96 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   journalContainer: {
-    marginTop: spacing.xl,
+    marginTop: spacing.xl * 2,
     width: '100%',
     maxWidth: 350,
   },
-  inputRow: {
+  inputModeContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
+    justifyContent: 'center',
+    gap: spacing.xl,
   },
-  journalInput: {
-    flex: 1,
+  modeButton: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: colors.primary.white,
     borderWidth: 1,
-    borderRadius: 12,
-    padding: spacing.md,
-    minHeight: 120,
-    fontSize: typography.fontSize.md,
-    textAlignVertical: 'top',
-  },
-  microphoneButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1,
+    borderColor: colors.neutral.gray300,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  microphoneIcon: {
-    fontSize: 24,
+  dictateButton: {
+    backgroundColor: '#5A7A5A',
+    borderColor: '#5A7A5A',
+  },
+  modeButtonRecording: {
+    backgroundColor: '#D32F2F',
+    borderColor: '#D32F2F',
+  },
+  modeButtonText: {
+    fontSize: typography.fontSize.lg,
+    color: colors.primary.black,
+    marginTop: spacing.sm,
+    fontWeight: '500',
+  },
+  dictateButtonText: {
+    fontSize: typography.fontSize.lg,
+    color: colors.primary.white,
+    marginTop: spacing.sm,
+    fontWeight: '500',
+  },
+  // Custom microphone icon
+  micIconContainer: {
+    width: 30,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  micIconBody: {
+    width: 20,
+    height: 28,
+    backgroundColor: colors.primary.white,
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: colors.primary.white,
+  },
+  micIconDot: {
+    position: 'absolute',
+    bottom: 0,
+    width: 8,
+    height: 8,
+    backgroundColor: colors.primary.white,
+    borderRadius: 4,
+  },
+  // Custom type/edit icon
+  typeIconContainer: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  typeIconLine1: {
+    width: 24,
+    height: 3,
+    backgroundColor: colors.primary.black,
+    borderRadius: 2,
+    transform: [{ rotate: '45deg' }],
+    position: 'absolute',
+  },
+  typeIconLine2: {
+    width: 8,
+    height: 8,
+    backgroundColor: colors.primary.black,
+    position: 'absolute',
+    bottom: -2,
+    right: 0,
+    transform: [{ rotate: '45deg' }],
   },
   completeButton: {
     marginTop: spacing.xl,
@@ -435,5 +547,51 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.primary.black,
     borderRadius: 2,
+  },
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.primary.white,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral.gray200,
+  },
+  modalTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: '600',
+    color: colors.primary.black,
+  },
+  modalCloseButton: {
+    padding: spacing.xs,
+  },
+  modalCloseText: {
+    fontSize: typography.fontSize.md,
+    color: colors.primary.black,
+  },
+  modalDoneButton: {
+    padding: spacing.xs,
+  },
+  modalDoneText: {
+    fontSize: typography.fontSize.md,
+    color: '#5A7A5A',
+    fontWeight: '600',
+  },
+  modalContent: {
+    flex: 1,
+    padding: spacing.lg,
+  },
+  modalTextInput: {
+    flex: 1,
+    fontSize: typography.fontSize.lg,
+    lineHeight: typography.lineHeight.lg * 1.5,
+    color: colors.primary.black,
+    textAlignVertical: 'top',
+    padding: spacing.md,
   },
 });
