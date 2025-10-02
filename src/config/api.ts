@@ -1,6 +1,5 @@
 // API Configuration
-// Temporarily using production for testing
-const ENV = 'production'; // __DEV__ ? 'development' : 'production';
+const ENV = 'production'; // Force production for testing
 
 const API_URLS = {
   development: 'http://localhost:3000',

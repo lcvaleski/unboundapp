@@ -116,6 +116,7 @@ export const ExerciseCardsScreen = () => {
   const [modalText, setModalText] = useState('');
   const [aiAnalysis, setAiAnalysis] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [hasTriggeredAnalysis, setHasTriggeredAnalysis] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const ITEM_HEIGHT = screenHeight * 0.8;
 
@@ -126,8 +127,15 @@ export const ExerciseCardsScreen = () => {
       listener: (event: any) => {
         const offset = event.nativeEvent.contentOffset.y;
         const newIndex = Math.round(offset / ITEM_HEIGHT);
-        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < cards.length) {
+        if (newIndex !== currentIndex && newIndex >= 0) {
           setCurrentIndex(newIndex);
+
+          // Auto-trigger analysis when scrolling to analysis card (index 9)
+          if (newIndex === 9 && journalText && !hasTriggeredAnalysis) {
+            console.log('Triggering analysis for card at index 9');
+            setHasTriggeredAnalysis(true);
+            analyzeTranscription(journalText);
+          }
         }
       },
     }
@@ -167,7 +175,9 @@ export const ExerciseCardsScreen = () => {
 
   const analyzeTranscription = async (transcription: string) => {
     try {
-      console.log('Getting AI analysis...');
+      console.log('Starting AI analysis...');
+      console.log('Current state - isAnalyzing:', isAnalyzing, 'aiAnalysis:', aiAnalysis);
+
       setIsAnalyzing(true);
       setAiAnalysis(''); // Clear any previous analysis
 
@@ -189,17 +199,20 @@ export const ExerciseCardsScreen = () => {
 
       const data = await response.json();
 
-      if (data.success) {
-        console.log('AI Analysis:', data.analysis);
+      if (data.success && data.analysis) {
+        console.log('AI Analysis received:', data.analysis);
+        // Set both states together to ensure consistency
+        setIsAnalyzing(false);
         setAiAnalysis(data.analysis);
+        console.log('Analysis state updated - analysis set to:', data.analysis.substring(0, 50));
       } else {
         console.error('Analysis failed:', data.message);
+        setIsAnalyzing(false);
       }
     } catch (error) {
       console.error('Analysis error:', error);
-      // Don't show alert - analysis is optional enhancement
-    } finally {
       setIsAnalyzing(false);
+      // Don't show alert - analysis is optional enhancement
     }
   };
 
@@ -231,9 +244,9 @@ export const ExerciseCardsScreen = () => {
         // Update journal text with transcription
         setJournalText(data.text);
         setModalText(data.text);
-
-        // Now get AI analysis
-        await analyzeTranscription(data.text);
+        setHasTriggeredAnalysis(false); // Reset so new analysis can trigger
+        setAiAnalysis(''); // Clear old analysis
+        // Don't auto-analyze here, let user swipe to see analysis
       } else {
         throw new Error(data.message || 'Transcription failed');
       }
@@ -243,9 +256,30 @@ export const ExerciseCardsScreen = () => {
     }
   };
 
+  // Create dynamic cards list including analysis card when available
+  const getDisplayCards = () => {
+    const displayCards = [...cards];
+
+    // Always add analysis card after journal if journal has text
+    if (journalText) {
+      const analysisCard = {
+        id: 'analysis',
+        content: isAnalyzing ? 'Analyzing your reflection...' : (aiAnalysis || 'Processing...'),
+        isAnalysis: true,
+        isLoading: isAnalyzing,
+        hasContent: !!aiAnalysis,
+      };
+      // Insert after the journal card (which is at index 8)
+      displayCards.splice(9, 0, analysisCard);
+    }
+
+    return displayCards;
+  };
+
   // All cards are overlaid at the same position
   const renderOverlayCards = () => {
-    return cards.map((card, index) => {
+    const displayCards = getDisplayCards();
+    return displayCards.map((card, index) => {
       const isInverted = card.isInverted;
       const textColor = isInverted ? colors.primary.white : colors.primary.black;
 
@@ -295,9 +329,27 @@ export const ExerciseCardsScreen = () => {
           {isInverted && currentIndex === index && (
             <View style={styles.invertedBackground} pointerEvents="none" />
           )}
-          <Text style={[styles.cardText, { color: textColor }]}>
-            {card.content}
-          </Text>
+
+          {card.isAnalysis ? (
+            <View style={styles.analysisCardContainer}>
+              <View style={styles.analysisCardBox}>
+                <Text style={styles.analysisCardLabel}>
+                  {card.isLoading ? 'Analyzing...' : 'Your coach says:'}
+                </Text>
+                <Text style={[
+                  styles.analysisCardText,
+                  card.isLoading && styles.analysisCardTextLoading,
+                  !card.hasContent && !card.isLoading && styles.analysisCardTextPrompt
+                ]}>
+                  {card.content}
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <Text style={[styles.cardText, { color: textColor }]}>
+              {card.content}
+            </Text>
+          )}
 
           {card.hasJournal && currentIndex === index && (
             <View style={styles.journalContainer}>
@@ -339,19 +391,12 @@ export const ExerciseCardsScreen = () => {
                   <Text style={[styles.transcriptionText, { color: textColor }]}>
                     {journalText}
                   </Text>
-                  {(isAnalyzing || aiAnalysis) ? (
-                    <View style={styles.analysisContainer}>
-                      <Text style={[styles.analysisText, { color: textColor }]}>
-                        {isAnalyzing ? 'Analyzing your reflection...' : aiAnalysis}
-                      </Text>
-                    </View>
-                  ) : null}
                 </View>
               ) : null}
             </View>
           )}
 
-          {index === cards.length - 1 && currentIndex === index && (
+          {index === displayCards.length - 1 && currentIndex === index && (
             <TouchableOpacity
               style={styles.completeButton}
               onPress={handleComplete}
@@ -387,7 +432,7 @@ export const ExerciseCardsScreen = () => {
         snapToAlignment="start"
         disableIntervalMomentum={true}
       >
-        {cards.map((_, index) => (
+        {getDisplayCards().map((_, index) => (
           <View key={index} style={{ height: ITEM_HEIGHT, backgroundColor: 'transparent' }} />
         ))}
       </Animated.ScrollView>
@@ -427,14 +472,12 @@ export const ExerciseCardsScreen = () => {
             <Text style={styles.modalTitle}>Type Your Reflection</Text>
             <TouchableOpacity
               style={styles.modalDoneButton}
-              onPress={async () => {
+              onPress={() => {
                 setJournalText(modalText);
                 setShowTypeModal(false);
-                // Get AI analysis for typed text too
-                if (modalText.trim()) {
-                  // Don't await here so modal closes immediately
-                  analyzeTranscription(modalText);
-                }
+                setHasTriggeredAnalysis(false); // Reset so new analysis can trigger
+                setAiAnalysis(''); // Clear old analysis
+                // Don't auto-analyze, let user swipe to see analysis
               }}
             >
               <Text style={styles.modalDoneText}>Done</Text>
@@ -725,5 +768,49 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
     opacity: 0.8,
+  },
+  // Analysis card styles
+  analysisCardContainer: {
+    width: '100%',
+    paddingHorizontal: spacing.xl * 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  analysisCardBox: {
+    backgroundColor: '#F0F9F1', // Very light green background
+    borderRadius: 20,
+    paddingHorizontal: spacing.xl * 2,
+    paddingVertical: spacing.xl * 1.5,
+    width: screenWidth - (spacing.xl * 4), // Full width minus padding
+    borderWidth: 1,
+    borderColor: '#C8E6C9', // Light green border
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  analysisCardLabel: {
+    fontSize: typography.fontSize.sm,
+    color: '#2E7D32', // Rich green for label
+    letterSpacing: 0.5,
+    marginBottom: spacing.lg,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  analysisCardText: {
+    fontSize: 18,
+    lineHeight: 26,
+    color: colors.primary.black,
+    textAlign: 'center',
+    fontWeight: '400',
+  },
+  analysisCardTextLoading: {
+    opacity: 0.6,
+    fontStyle: 'italic',
+  },
+  analysisCardTextPrompt: {
+    opacity: 0.5,
+    fontSize: typography.fontSize.sm,
   },
 });
