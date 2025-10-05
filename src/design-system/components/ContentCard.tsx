@@ -25,7 +25,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress} activeOpacity={0.9}>
       <LinearGradient
-        colors={['#C8A882', '#A68B5B']}
+        colors={['#3D5954', '#2C4F4A']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

@@ -25,7 +25,7 @@ export const PracticeCard: React.FC<PracticeCardProps> = ({
   return (
     <View style={styles.cardContainer}>
       <LinearGradient
-        colors={['#D4B896', '#A68B5B']}
+        colors={['#2C4F4A', '#1A3A36', '#0F2622']}
         style={styles.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -48,19 +48,22 @@ const styles = StyleSheet.create({
   cardContainer: {
     marginHorizontal: 16,
     marginVertical: 8,
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: 'hidden',
-    shadowColor: '#5D4E37',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 12,
+    backgroundColor: '#FFFFFF',
   },
   gradient: {
     width: '100%',
   },
   content: {
-    padding: 20,
+    padding: 24,
   },
   label: {
     fontSize: 11,
@@ -71,11 +74,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 24,
+    fontWeight: '800',
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   subtitle: {
     fontSize: 14,
@@ -93,16 +99,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    backgroundColor: '#F5E6D3',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
     alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(44, 79, 74, 0.1)',
   },
   buttonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#8B6F47',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A3A36',
     textAlign: 'center',
+    letterSpacing: 0.5,
   },
 });

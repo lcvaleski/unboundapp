@@ -66,11 +66,6 @@ export const ContentScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Content Library</Text>
-        <Text style={styles.subtitle}>
-          Explore insights and practices to transform your digital habits
-        </Text>
-
         {Object.entries(contentByCategory).map(([categoryName, items]) => (
           <View key={categoryName}>
             <Text style={styles.categoryHeader}>{categoryName.toUpperCase()}</Text>
