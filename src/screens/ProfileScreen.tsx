@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../design-system/components/Button';
 import { colors, typography, spacing } from '../design-system/theme';
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({ navigation }: any) => {
   const { user, signOut, deleteAccount } = useAuth();
 
   const handleSignOut = async () => {
@@ -34,6 +34,10 @@ export const ProfileScreen = () => {
         },
       ]
     );
+  };
+
+  const handleViewOnboarding = () => {
+    navigation.navigate('Onboarding');
   };
 
   return (
@@ -70,13 +74,21 @@ export const ProfileScreen = () => {
         
         <View style={styles.actions}>
           <Button
+            title="View Onboarding"
+            onPress={handleViewOnboarding}
+            variant="secondary"
+            size="large"
+            style={styles.actionButton}
+          />
+
+          <Button
             title="Sign Out"
             onPress={handleSignOut}
             variant="secondary"
             size="large"
             style={styles.actionButton}
           />
-          
+
           <Button
             title="Delete Account"
             onPress={handleDeleteAccount}

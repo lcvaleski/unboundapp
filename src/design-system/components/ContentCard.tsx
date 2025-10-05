@@ -31,12 +31,21 @@ export const ContentCard: React.FC<ContentCardProps> = ({
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.content}>
-          <View style={styles.header}>
-            {category && <Text style={styles.category}>{category}</Text>}
-            {duration && <Text style={styles.duration}>{duration}</Text>}
+          <View style={styles.contentWrapper}>
+            <View style={styles.textContent}>
+              <View style={styles.header}>
+                {category && <Text style={styles.category}>{category}</Text>}
+                {duration && <Text style={styles.duration}>{duration}</Text>}
+              </View>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.description}>{description}</Text>
+            </View>
+            <View style={styles.playButton}>
+              <View style={styles.playIcon}>
+                <View style={styles.playTriangle} />
+              </View>
+            </View>
           </View>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.description}>{description}</Text>
         </View>
       </LinearGradient>
     </TouchableOpacity>
@@ -60,6 +69,15 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+  },
+  contentWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textContent: {
+    flex: 1,
+    marginRight: 12,
   },
   header: {
     flexDirection: 'row',
@@ -88,5 +106,33 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: 'rgba(255, 255, 255, 0.85)',
     lineHeight: 18,
+  },
+  playButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playTriangle: {
+    width: 0,
+    height: 0,
+    borderLeftWidth: 10,
+    borderRightWidth: 0,
+    borderTopWidth: 6,
+    borderBottomWidth: 6,
+    borderLeftColor: '#2C4F4A',
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    marginLeft: 3,
   },
 });

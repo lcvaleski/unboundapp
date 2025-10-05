@@ -37,7 +37,7 @@ export function RootNavigator() {
   if (loading || hasSeenOnboarding === null) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#000000" />
+        <ActivityIndicator size="large" color="#2C4F4A" />
       </View>
     );
   }
@@ -47,11 +47,13 @@ export function RootNavigator() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
-            <Stack.Screen name="MainStack" component={MainStack} />
-          ) : !hasSeenOnboarding ? (
-            <Stack.Screen name="Onboarding">
-              {(props) => <OnboardingScreen {...props} onComplete={handleOnboardingComplete} />}
-            </Stack.Screen>
+            !hasSeenOnboarding ? (
+              <Stack.Screen name="Onboarding">
+                {(props) => <OnboardingScreen {...props} onComplete={handleOnboardingComplete} />}
+              </Stack.Screen>
+            ) : (
+              <Stack.Screen name="MainStack" component={MainStack} />
+            )
           ) : (
             <Stack.Screen name="AuthStack" component={AuthStack} />
           )}
@@ -66,6 +68,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   },
 });

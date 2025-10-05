@@ -101,9 +101,10 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#F5E6D3',
     borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
+    paddingVertical: 12,
+    paddingHorizontal: 80,
     alignSelf: 'center',
+    minWidth: '90%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,

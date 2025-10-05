@@ -5,6 +5,29 @@ import { colors, spacing, typography } from '../design-system/theme';
 
 export const ContentScreen = () => {
   const contentByCategory = {
+    'Interviews & Teachers': [
+      {
+        id: '7',
+        title: 'Dr. Michael Stora: Why Blocking Never Works',
+        category: 'Interview',
+        duration: '9 min',
+        description: 'French psychoanalyst on why restriction creates rebellion and how to heal the root cause instead.',
+      },
+      {
+        id: '8',
+        title: 'Jenny Odell: The Art of Doing Nothing',
+        category: 'Teacher',
+        duration: '11 min',
+        description: 'Artist and author on reclaiming your attention not through productivity, but through presence.',
+      },
+      {
+        id: '9',
+        title: "Dr. Gabor Maté: What You're Really Scrolling For",
+        category: 'Interview',
+        duration: '14 min',
+        description: 'Addiction expert reveals the emotional wounds beneath compulsive phone use.',
+      },
+    ],
     'Insights': [
       {
         id: '5',

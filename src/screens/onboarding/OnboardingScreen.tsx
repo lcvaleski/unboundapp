@@ -23,32 +23,32 @@ const slides: Slide[] = [
   {
     id: 1,
     subtitle: "You've been misled about your phone addiction.",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   },
   {
     id: 2,
     subtitle: "It's no secret that phones are making us less happy.",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   },
   {
     id: 3,
     subtitle: "But the solutions you've been sold don't last.",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   },
   {
     id: 4,
     subtitle: "App blockers don't work—you just end up bypassing them.",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   },
   {
     id: 5,
     subtitle: "What we need is a fundamental change from within.",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   },
   {
     id: 6,
     subtitle: "Your journey to a healthier relationship with your phone begins now.",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   }
 ];
 
@@ -169,7 +169,7 @@ export default function OnboardingScreen({ navigation, onComplete, isPreview = f
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
   },
   slide: {
     width: screenWidth,
@@ -183,11 +183,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '600',
-    color: '#000000',
+    color: '#1A3A36',
     textAlign: 'center',
-    lineHeight: 32,
+    lineHeight: 36,
   },
   footer: {
     position: 'absolute',
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#000000',
+    backgroundColor: '#2C4F4A',
     opacity: 0.2,
     marginHorizontal: 5,
   },
@@ -215,11 +215,16 @@ const styles = StyleSheet.create({
     width: 20,
   },
   nextButton: {
-    backgroundColor: '#000000',
+    backgroundColor: '#2C4F4A',
     paddingVertical: 15,
     paddingHorizontal: 40,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
   nextButtonText: {
     color: '#FFFFFF',
