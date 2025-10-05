@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Text, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Button } from '../design-system/components/Button';
-import { colors, spacing } from '../design-system/theme';
+import { PracticeCard } from '../design-system/components/PracticeCard';
+import { SimpleCard } from '../design-system/components/SimpleCard';
+import { colors, spacing, typography } from '../design-system/theme';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
@@ -18,24 +19,35 @@ export const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.actions}>
-          <Button
-            title="Start Phone Awareness Exercise"
-            onPress={handleStartExercise}
-            variant="primary"
-            size="large"
-            style={styles.button}
-          />
-          <Button
-            title="View Onboarding"
-            onPress={handleViewOnboarding}
-            variant="secondary"
-            size="large"
-            style={styles.button}
-          />
-        </View>
-      </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <PracticeCard
+          title="Labeling the phone as object"
+          subtitle="Why Unbound picked this"
+          description="Understanding what drives your compulsive phone use could help you develop a healthier relationship with your device."
+          buttonText="Begin"
+          onPress={handleStartExercise}
+        />
+
+        <Text style={styles.sectionTitle}>YOUR PROGRESS</Text>
+
+        <SimpleCard
+          title="Yesterday's Reflection"
+          description="You identified anxiety as a trigger for phone use. Let's explore coping strategies."
+          buttonText="Review"
+          onPress={() => console.log('Review')}
+        />
+
+        <SimpleCard
+          title="Weekly Check-in"
+          description="Track your progress and see how your screen time has changed this week."
+          buttonText="View Stats"
+          onPress={() => console.log('Stats')}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -43,19 +55,21 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: '#FAF8F3',
   },
-  content: {
+  scrollView: {
     flex: 1,
-    padding: spacing.xl,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  actions: {
-    width: '100%',
+  scrollContent: {
+    paddingVertical: 20,
   },
-  button: {
-    width: '100%',
-    marginBottom: spacing.md,
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#999',
+    letterSpacing: 1.5,
+    marginTop: 24,
+    marginBottom: 12,
+    marginHorizontal: 16,
   },
 });

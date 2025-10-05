@@ -93,7 +93,7 @@ export const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: colors.background.paper,
   },
   content: {
     flex: 1,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSize['3xl'],
     fontFamily: typography.fontFamily.bold,
-    color: colors.primary.black,
+    color: colors.text.primary,
     marginBottom: spacing.xl,
     textAlign: 'center',
   },
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: typography.fontSize.lg,
     fontFamily: typography.fontFamily.bold,
-    color: colors.primary.black,
+    color: colors.text.primary,
     marginBottom: spacing.lg,
   },
   infoRow: {
@@ -124,14 +124,14 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: typography.fontSize.sm,
     fontFamily: typography.fontFamily.medium,
-    color: colors.primary.black,
+    color: colors.text.primary,
     opacity: 0.7,
     marginBottom: spacing.xs,
   },
   infoValue: {
     fontSize: typography.fontSize.md,
     fontFamily: typography.fontFamily.regular,
-    color: colors.primary.black,
+    color: colors.text.primary,
   },
   actions: {
     marginTop: 'auto',

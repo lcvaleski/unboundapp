@@ -65,87 +65,87 @@ export const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>Login</Text>
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        
-        <View style={styles.formFields}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            placeholder="Enter your email"
-            placeholderTextColor="#999"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={true}
-            placeholder="Enter your password"
-            placeholderTextColor="#999"
-          />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPassword')}
-            style={styles.forgotPasswordLink}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <Button
-          title="Login"
-          onPress={handleLogin}
-          variant="primary"
-          size="large"
-          loading={loading}
-          style={{ width: '100%' }}
-          disabled={!isFormValid || loading}
-        />
-        
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>OR</Text>
-          <View style={styles.dividerLine} />
-        </View>
-        
-        <View style={styles.socialButtonsContainer}>
-          {Platform.OS === 'ios' && (
+      <Text style={styles.title}>Welcome Back</Text>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+      <View style={styles.formFields}>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                placeholder="Enter your email"
+                placeholderTextColor={colors.text.tertiary}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={true}
+                placeholder="Enter your password"
+                placeholderTextColor={colors.text.tertiary}
+              />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgotPassword')}
+                style={styles.forgotPasswordLink}
+              >
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+      </View>
+
+      <Button
+        title="Sign In"
+        onPress={handleLogin}
+        variant="primary"
+        size="large"
+        loading={loading}
+        style={{ width: '100%' }}
+        disabled={!isFormValid || loading}
+      />
+
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <View style={styles.socialButtonsContainer}>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={[styles.socialButton, styles.appleButton]}
+                onPress={handleAppleSignIn}
+                disabled={loading}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.socialButtonText, styles.appleButtonText]}>Sign in with Apple</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
-              style={styles.socialButton}
-              onPress={handleAppleSignIn}
+              style={[styles.socialButton, styles.googleButton]}
+              onPress={handleGoogleSignIn}
               disabled={loading}
               activeOpacity={0.7}
             >
-              <Text style={styles.socialButtonText}>Sign in with Apple</Text>
+              <Text style={styles.socialButtonText}>Sign in with Google</Text>
             </TouchableOpacity>
-          )}
+          </View>
+
           <TouchableOpacity
-            style={styles.socialButton}
-            onPress={handleGoogleSignIn}
+            onPress={() => {
+              console.log('Sign up link pressed, navigating to SignUp');
+              navigation.navigate('SignUp');
+            }}
+            style={styles.signUpLink}
             disabled={loading}
-            activeOpacity={0.7}
           >
-            <Text style={styles.socialButtonText}>Sign in with Google</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <TouchableOpacity
-          onPress={() => {
-            console.log('Sign up link pressed, navigating to SignUp');
-            navigation.navigate('SignUp');
-          }}
-          style={styles.signUpLink}
-          disabled={loading}
-        >
-          <Text style={styles.signUpText}>
-            Don't have an account? <Text style={styles.signUpTextBold}>Sign Up</Text>
-          </Text>
-        </TouchableOpacity>
+            <Text style={styles.signUpText}>
+              Don't have an account? <Text style={styles.signUpTextBold}>Sign Up</Text>
+            </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -153,41 +153,41 @@ export const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xl * 2,
     justifyContent: 'center',
   },
   title: {
     fontSize: typography.fontSize['3xl'],
-    fontFamily: typography.fontFamily.bold,
     fontWeight: '700',
     marginBottom: spacing.xl * 2,
     marginTop: spacing.xl,
     textAlign: 'center',
-    color: colors.primary.black,
+    color: colors.text.primary,
   },
   forgotPasswordLink: {
     alignSelf: 'flex-end',
     marginBottom: spacing.md,
   },
   forgotPasswordText: {
-    color: colors.primary.black,
+    color: colors.text.primary,
     fontSize: typography.fontSize.sm,
     textDecorationLine: 'underline',
     fontFamily: typography.fontFamily.medium,
+    fontWeight: '500',
   },
   signUpLink: {
     alignItems: 'center',
     marginTop: spacing.lg,
   },
   signUpText: {
-    color: colors.primary.black,
+    color: colors.text.primary,
     fontSize: typography.fontSize.md,
     textAlign: 'center',
   },
   signUpTextBold: {
-    color: colors.primary.black,
+    color: colors.text.primary,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
@@ -226,33 +226,46 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.neutral.gray100,
     borderRadius: 12,
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.md + 2,
+    
     width: '100%',
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border.light,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  appleButton: {
+    backgroundColor: '#000000',
+  },
+  googleButton: {
+    backgroundColor: '#F0F0F0',
   },
   socialButtonText: {
-    color: colors.primary.black,
     fontSize: typography.fontSize.md,
     fontFamily: typography.fontFamily.bold,
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
+  appleButtonText: {
+    color: colors.text.inverse,
   },
   label: {
     fontSize: typography.fontSize.sm,
-    color: colors.primary.black,
+    color: colors.text.primary,
     marginBottom: spacing.xs,
     fontFamily: typography.fontFamily.medium,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: '#E0E0E0',
     borderRadius: 12,
     padding: spacing.md,
     fontSize: typography.fontSize.md,
-    color: colors.primary.black,
-    backgroundColor: colors.primary.white,
+    color: colors.text.primary,
+    backgroundColor: '#FFFFFF',
     marginBottom: spacing.md,
   },
 });

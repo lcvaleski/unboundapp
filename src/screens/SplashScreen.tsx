@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.primary.white,
+    backgroundColor: colors.background.default,
   },
   buttonContainer: {
     position: 'absolute',
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   linkText: {
-    color: colors.primary.black,
+    color: colors.text.primary,
     fontSize: 16,
   },
 });

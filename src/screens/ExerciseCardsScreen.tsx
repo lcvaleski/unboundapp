@@ -27,6 +27,9 @@ interface CardData {
   content: string;
   isInverted?: boolean;
   hasJournal?: boolean;
+  isAnalysis?: boolean;
+  isLoading?: boolean;
+  hasContent?: boolean;
 }
 
 const cards: CardData[] = [
@@ -118,7 +121,7 @@ export const ExerciseCardsScreen = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasTriggeredAnalysis, setHasTriggeredAnalysis] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const ITEM_HEIGHT = screenHeight * 0.8;
+  const ITEM_HEIGHT = screenHeight;
 
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -281,7 +284,7 @@ export const ExerciseCardsScreen = () => {
     const displayCards = getDisplayCards();
     return displayCards.map((card, index) => {
       const isInverted = card.isInverted;
-      const textColor = isInverted ? colors.primary.white : colors.primary.black;
+      const textColor = isInverted ? colors.text.inverse : colors.text.primary;
 
       // Fade timing
       const fadeInStart = (index - 0.8) * ITEM_HEIGHT;
@@ -506,7 +509,7 @@ export const ExerciseCardsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.gray100,
+    backgroundColor: '#FFFFFF',
   },
   header: {
     position: 'absolute',
@@ -518,27 +521,27 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.neutral.gray200,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   closeText: {
     fontSize: 18,
-    color: colors.primary.black,
+    color: colors.text.primary,
   },
   contentContainer: {
     position: 'absolute',
-    top: 0,
+    top: 80,
     left: 0,
     right: 0,
-    bottom: 80,
+    bottom: 100,
     justifyContent: 'center',
     alignItems: 'center',
   },
   overlayCard: {
     position: 'absolute',
     width: screenWidth,
-    paddingHorizontal: spacing.xl * 2,
+    paddingHorizontal: spacing.xl * 1.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -556,7 +559,7 @@ const styles = StyleSheet.create({
     left: -screenWidth,
     right: -screenWidth,
     bottom: -screenHeight,
-    backgroundColor: colors.primary.black,
+    backgroundColor: '#000000',
   },
   scrollView: {
     flex: 1,
@@ -566,8 +569,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   cardText: {
-    fontSize: typography.fontSize['2xl'],
-    lineHeight: typography.lineHeight['2xl'],
+    fontSize: 22,
+    lineHeight: 32,
     fontWeight: '400',
     textAlign: 'center',
   },
@@ -585,9 +588,9 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: colors.primary.white,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: colors.neutral.gray300,
+    borderColor: '#E0E0E0',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -606,13 +609,13 @@ const styles = StyleSheet.create({
   },
   modeButtonText: {
     fontSize: typography.fontSize.lg,
-    color: colors.primary.black,
+    color: colors.text.primary,
     marginTop: spacing.sm,
     fontWeight: '500',
   },
   dictateButtonText: {
     fontSize: typography.fontSize.lg,
-    color: colors.primary.white,
+    color: colors.text.inverse,
     marginTop: spacing.sm,
     fontWeight: '500',
   },
@@ -626,17 +629,17 @@ const styles = StyleSheet.create({
   micIconBody: {
     width: 20,
     height: 28,
-    backgroundColor: colors.primary.white,
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     borderWidth: 3,
-    borderColor: colors.primary.white,
+    borderColor: '#FFFFFF',
   },
   micIconDot: {
     position: 'absolute',
     bottom: 0,
     width: 8,
     height: 8,
-    backgroundColor: colors.primary.white,
+    backgroundColor: '#FFFFFF',
     borderRadius: 4,
   },
   // Custom type/edit icon
@@ -649,7 +652,7 @@ const styles = StyleSheet.create({
   typeIconLine1: {
     width: 24,
     height: 3,
-    backgroundColor: colors.primary.black,
+    backgroundColor: colors.neutral.gray800,
     borderRadius: 2,
     transform: [{ rotate: '45deg' }],
     position: 'absolute',
@@ -657,7 +660,7 @@ const styles = StyleSheet.create({
   typeIconLine2: {
     width: 8,
     height: 8,
-    backgroundColor: colors.primary.black,
+    backgroundColor: colors.neutral.gray800,
     position: 'absolute',
     bottom: -2,
     right: 0,
@@ -667,37 +670,37 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl * 1.5,
-    backgroundColor: colors.primary.black,
+    backgroundColor: '#000000',
     borderRadius: 6,
     alignItems: 'center',
   },
   completeButtonText: {
     fontSize: typography.fontSize.md,
     fontWeight: '600',
-    color: colors.primary.white,
+    color: '#FFFFFF',
   },
   progressContainer: {
     position: 'absolute',
-    bottom: spacing.xl,
+    bottom: 40,
     left: spacing.lg,
     right: spacing.lg,
   },
   progressBarBackground: {
     width: '100%',
     height: 4,
-    backgroundColor: colors.neutral.gray300,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 2,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: colors.primary.black,
+    backgroundColor: '#000000',
     borderRadius: 2,
   },
   // Modal styles
   modalContainer: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: '#FFFFFF',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -711,14 +714,14 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: '600',
-    color: colors.primary.black,
+    color: colors.text.primary,
   },
   modalCloseButton: {
     padding: spacing.xs,
   },
   modalCloseText: {
     fontSize: typography.fontSize.md,
-    color: colors.primary.black,
+    color: colors.text.primary,
   },
   modalDoneButton: {
     padding: spacing.xs,
@@ -736,7 +739,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: typography.fontSize.lg,
     lineHeight: typography.lineHeight.lg * 1.5,
-    color: colors.primary.black,
+    color: colors.text.primary,
     textAlignVertical: 'top',
     padding: spacing.md,
   },
@@ -777,13 +780,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   analysisCardBox: {
-    backgroundColor: '#F0F9F1', // Very light green background
+    backgroundColor: '#F0F9F1',
     borderRadius: 20,
     paddingHorizontal: spacing.xl * 2,
     paddingVertical: spacing.xl * 1.5,
     width: screenWidth - (spacing.xl * 4), // Full width minus padding
     borderWidth: 1,
-    borderColor: '#C8E6C9', // Light green border
+    borderColor: '#C8E6C9',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -792,7 +795,7 @@ const styles = StyleSheet.create({
   },
   analysisCardLabel: {
     fontSize: typography.fontSize.sm,
-    color: '#2E7D32', // Rich green for label
+    color: '#2E7D32',
     letterSpacing: 0.5,
     marginBottom: spacing.lg,
     fontWeight: '600',
@@ -801,7 +804,7 @@ const styles = StyleSheet.create({
   analysisCardText: {
     fontSize: 18,
     lineHeight: 26,
-    color: colors.primary.black,
+    color: colors.text.primary,
     textAlign: 'center',
     fontWeight: '400',
   },

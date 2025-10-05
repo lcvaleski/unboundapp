@@ -36,22 +36,23 @@ export const Button: React.FC<ButtonProps> = ({
   icon,
 }) => {
   const getBackgroundColor = () => {
-    if (disabled) return colors.neutral.gray400;
+    if (disabled) return colors.neutral.gray300;
     switch (variant) {
       case 'primary':
-        return colors.primary.black;
+        return colors.primary.oak;
       case 'secondary':
-        return colors.primary.white;
+        return colors.accent.cream;
       default:
-        return colors.primary.black;
+        return colors.primary.oak;
     }
   };
 
   const getTextColor = () => {
-    if (variant === 'secondary') {
-      return colors.primary.black;
+    if (disabled) return colors.neutral.gray500;
+    if (variant === 'primary') {
+      return colors.neutral.white;
     }
-    return colors.primary.white;
+    return colors.text.primary;
   };
 
   const getPadding = () => {
@@ -74,8 +75,9 @@ export const Button: React.FC<ButtonProps> = ({
         {
           backgroundColor: getBackgroundColor(),
           paddingVertical: getPadding(),
-          borderWidth: variant === 'secondary' ? 1 : 0,
-          borderColor: variant === 'secondary' ? colors.primary.black : undefined,
+          paddingHorizontal: getPadding() * 2,
+          borderWidth: variant === 'secondary' ? 1.5 : 0,
+          borderColor: variant === 'secondary' ? colors.accent.sand : undefined,
         },
         style,
       ]}
@@ -105,14 +107,19 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 6,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     marginVertical: spacing.sm / 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   text: {
     fontFamily: typography.fontFamily.medium,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: '600',
   },
 });

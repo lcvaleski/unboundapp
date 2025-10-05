@@ -77,7 +77,7 @@ export const SignUpScreen = ({ navigation }: any) => {
     <View style={styles.container}>
         <Text style={styles.title}>Create Account</Text>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        
+
         <View style={styles.formFields}>
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -86,7 +86,7 @@ export const SignUpScreen = ({ navigation }: any) => {
             onChangeText={setEmail}
             keyboardType="email-address"
             placeholder="Enter your email"
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.text.tertiary}
             autoCapitalize="none"
             autoCorrect={false}
             editable={!loading}
@@ -100,7 +100,7 @@ export const SignUpScreen = ({ navigation }: any) => {
             onChangeText={setPassword}
             secureTextEntry={true}
             placeholder="Enter your password"
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.text.tertiary}
             editable={!loading}
           />
           {password && password.length < 6 && <Text style={styles.errorText}>Password must be at least 6 characters</Text>}
@@ -112,12 +112,12 @@ export const SignUpScreen = ({ navigation }: any) => {
             onChangeText={setConfirmPassword}
             secureTextEntry={true}
             placeholder="Confirm your password"
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.text.tertiary}
             editable={!loading}
           />
           {confirmPassword && password !== confirmPassword && <Text style={styles.errorText}>Passwords do not match</Text>}
         </View>
-        
+
         <Button
           title="Sign Up"
           onPress={handleSignUp}
@@ -128,34 +128,34 @@ export const SignUpScreen = ({ navigation }: any) => {
           disabled={!isFormValid || loading}
         />
         
-        <View style={styles.divider}>
+          <View style={styles.divider}>
           <View style={styles.dividerLine} />
           <Text style={styles.dividerText}>OR</Text>
           <View style={styles.dividerLine} />
-        </View>
-        
-        <View style={styles.socialButtonsContainer}>
+          </View>
+
+          <View style={styles.socialButtonsContainer}>
           {Platform.OS === 'ios' && (
-            <TouchableOpacity
-              style={styles.socialButton}
-              onPress={handleAppleSignIn}
+              <TouchableOpacity
+                style={[styles.socialButton, styles.appleButton]}
+                onPress={handleAppleSignIn}
               disabled={loading}
               activeOpacity={0.7}
             >
-              <Text style={styles.socialButtonText}>Sign up with Apple</Text>
+                <Text style={[styles.socialButtonText, styles.appleButtonText]}>Sign up with Apple</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={handleGoogleSignIn}
+            <TouchableOpacity
+              style={[styles.socialButton, styles.googleButton]}
+              onPress={handleGoogleSignIn}
             disabled={loading}
             activeOpacity={0.7}
           >
             <Text style={styles.socialButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
-        </View>
-        
-        <TouchableOpacity
+          </View>
+
+          <TouchableOpacity
           onPress={() => navigation.navigate('Login')}
           disabled={loading}
           style={styles.loginLink}
@@ -169,31 +169,30 @@ export const SignUpScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xl * 2,
     justifyContent: 'center',
   },
   title: {
     fontSize: typography.fontSize['3xl'],
-    fontFamily: typography.fontFamily.bold,
     fontWeight: '700',
     marginBottom: spacing.xl * 2,
     marginTop: spacing.xl,
     textAlign: 'center',
-    color: colors.primary.black,
+    color: colors.text.primary,
   },
   loginLink: {
     alignItems: 'center',
     marginTop: spacing.lg,
   },
   loginText: {
-    color: colors.primary.black,
+    color: colors.text.primary,
     fontSize: typography.fontSize.md,
     textAlign: 'center',
   },
   loginTextBold: {
-    color: colors.primary.black,
+    color: colors.text.primary,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
@@ -233,34 +232,46 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     borderRadius: 12,
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.md + 2,
     width: '100%',
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  appleButton: {
+    backgroundColor: '#000000',
+  },
+  googleButton: {
+    backgroundColor: '#F0F0F0',
   },
   socialButtonText: {
-    color: colors.primary.black,
     fontSize: typography.fontSize.md,
     fontFamily: typography.fontFamily.bold,
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
+  appleButtonText: {
+    color: colors.text.inverse,
   },
   label: {
     fontSize: typography.fontSize.sm,
-    color: colors.primary.black,
+    color: colors.text.primary,
     marginBottom: spacing.xs,
     fontFamily: typography.fontFamily.medium,
     marginTop: spacing.sm,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.border.light,
+    borderColor: '#E0E0E0',
     borderRadius: 12,
     padding: spacing.md,
     fontSize: typography.fontSize.md,
-    color: colors.primary.black,
-    backgroundColor: colors.primary.white,
+    color: colors.text.primary,
+    backgroundColor: '#FFFFFF',
     marginBottom: spacing.xs,
   },
 });

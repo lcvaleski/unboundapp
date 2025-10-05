@@ -73,7 +73,7 @@ export const ForgotPasswordScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: colors.background.paper,
   },
   content: {
     flex: 1,
@@ -85,11 +85,11 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.bold,
     marginBottom: spacing.md,
     textAlign: 'center',
-    color: colors.primary.black,
+    color: colors.text.primary,
   },
   subtitle: {
     fontSize: typography.fontSize.md,
-    color: colors.primary.black,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: spacing.xl,
     fontFamily: typography.fontFamily.regular,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   backLinkText: {
-    color: colors.primary.black,
+    color: colors.text.primary,
     fontSize: typography.fontSize.sm,
     textDecorationLine: 'underline',
     fontFamily: typography.fontFamily.medium,

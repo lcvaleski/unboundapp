@@ -1,11 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from '../screens/HomeScreen';
+import { ContentScreen } from '../screens/ContentScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { View, Text } from 'react-native';
 
 export type MainTabsParamList = {
   Home: undefined;
+  Content: undefined;
   Profile: undefined;
 };
 
@@ -34,6 +36,42 @@ const HomeIcon = ({ color, size }: { color: string; size: number }) => (
       borderRightColor: 'transparent',
       borderBottomColor: color,
     }} />
+  </View>
+);
+
+// Simple content icon - a document shape
+const ContentIcon = ({ color, size }: { color: string; size: number }) => (
+  <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{
+      width: size * 0.6,
+      height: size * 0.8,
+      borderWidth: 2,
+      borderColor: color,
+      borderRadius: 2,
+      backgroundColor: 'transparent',
+    }}>
+      <View style={{
+        width: size * 0.3,
+        height: 2,
+        backgroundColor: color,
+        marginTop: size * 0.15,
+        marginLeft: size * 0.1,
+      }} />
+      <View style={{
+        width: size * 0.3,
+        height: 2,
+        backgroundColor: color,
+        marginTop: size * 0.1,
+        marginLeft: size * 0.1,
+      }} />
+      <View style={{
+        width: size * 0.2,
+        height: 2,
+        backgroundColor: color,
+        marginTop: size * 0.1,
+        marginLeft: size * 0.1,
+      }} />
+    </View>
   </View>
 );
 
@@ -84,8 +122,16 @@ export function MainTabs() {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Course',
           tabBarIcon: HomeIcon,
+        }}
+      />
+      <Tab.Screen
+        name="Content"
+        component={ContentScreen}
+        options={{
+          tabBarLabel: 'Content',
+          tabBarIcon: ContentIcon,
         }}
       />
       <Tab.Screen
