@@ -86,7 +86,7 @@ export const SignUpScreen = ({ navigation }: any) => {
             onChangeText={setEmail}
             keyboardType="email-address"
             placeholder="Enter your email"
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor='#9B9B9B'
             autoCapitalize="none"
             autoCorrect={false}
             editable={!loading}
@@ -100,7 +100,7 @@ export const SignUpScreen = ({ navigation }: any) => {
             onChangeText={setPassword}
             secureTextEntry={true}
             placeholder="Enter your password"
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor='#9B9B9B'
             editable={!loading}
           />
           {password && password.length < 6 && <Text style={styles.errorText}>Password must be at least 6 characters</Text>}
@@ -112,7 +112,7 @@ export const SignUpScreen = ({ navigation }: any) => {
             onChangeText={setConfirmPassword}
             secureTextEntry={true}
             placeholder="Confirm your password"
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor='#9B9B9B'
             editable={!loading}
           />
           {confirmPassword && password !== confirmPassword && <Text style={styles.errorText}>Passwords do not match</Text>}
@@ -169,7 +169,7 @@ export const SignUpScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xl * 2,
     justifyContent: 'center',
@@ -187,12 +187,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   loginText: {
-    color: colors.text.primary,
+    color: '#2C4F4A',
     fontSize: typography.fontSize.md,
     textAlign: 'center',
   },
   loginTextBold: {
-    color: colors.text.primary,
+    color: '#2C4F4A',
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },

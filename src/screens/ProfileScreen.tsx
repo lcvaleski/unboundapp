@@ -141,6 +141,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   deleteButton: {
-    backgroundColor: colors.semantic.error,
+    backgroundColor: '#8B4444', // Muted red that fits the palette
   },
 });

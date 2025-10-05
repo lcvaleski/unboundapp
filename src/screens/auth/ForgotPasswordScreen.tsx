@@ -73,7 +73,7 @@ export const ForgotPasswordScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.paper,
+    backgroundColor: '#F9F6F2',
   },
   content: {
     flex: 1,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   backLinkText: {
-    color: colors.text.primary,
+    color: '#2C4F4A',
     fontSize: typography.fontSize.sm,
     textDecorationLine: 'underline',
     fontFamily: typography.fontFamily.medium,

@@ -39,11 +39,11 @@ export const Button: React.FC<ButtonProps> = ({
     if (disabled) return colors.neutral.gray300;
     switch (variant) {
       case 'primary':
-        return colors.primary.oak;
+        return '#2C4F4A'; // Deep teal green
       case 'secondary':
-        return colors.accent.cream;
+        return '#F5E6D3'; // Warm cream
       default:
-        return colors.primary.oak;
+        return '#2C4F4A';
     }
   };
 
@@ -52,7 +52,7 @@ export const Button: React.FC<ButtonProps> = ({
     if (variant === 'primary') {
       return colors.neutral.white;
     }
-    return colors.text.primary;
+    return '#1A3A36'; // Dark teal for secondary buttons
   };
 
   const getPadding = () => {
@@ -77,7 +77,7 @@ export const Button: React.FC<ButtonProps> = ({
           paddingVertical: getPadding(),
           paddingHorizontal: getPadding() * 2,
           borderWidth: variant === 'secondary' ? 1.5 : 0,
-          borderColor: variant === 'secondary' ? colors.accent.sand : undefined,
+          borderColor: variant === 'secondary' ? '#2C4F4A' : undefined,
         },
         style,
       ]}

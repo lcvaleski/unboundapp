@@ -76,7 +76,7 @@ export const LoginScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 placeholder="Enter your email"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor='#9B9B9B'
                 autoCapitalize="none"
                 autoCorrect={false}
               />
@@ -87,7 +87,7 @@ export const LoginScreen = () => {
                 onChangeText={setPassword}
                 secureTextEntry={true}
                 placeholder="Enter your password"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor='#9B9B9B'
               />
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgotPassword')}
@@ -153,7 +153,7 @@ export const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F9F6F2',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xl * 2,
     justifyContent: 'center',
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   forgotPasswordText: {
-    color: colors.text.primary,
+    color: '#2C4F4A',
     fontSize: typography.fontSize.sm,
     textDecorationLine: 'underline',
     fontFamily: typography.fontFamily.medium,
@@ -182,12 +182,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   signUpText: {
-    color: colors.text.primary,
+    color: '#2C4F4A',
     fontSize: typography.fontSize.md,
     textAlign: 'center',
   },
   signUpTextBold: {
-    color: colors.text.primary,
+    color: '#2C4F4A',
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
