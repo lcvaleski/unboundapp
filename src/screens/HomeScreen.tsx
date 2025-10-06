@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, SafeAreaView, Text, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, SafeAreaView, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PracticeCard } from '../design-system/components/PracticeCard';
 import { CourseProgressCard } from '../design-system/components/CourseProgressCard';
@@ -7,11 +7,20 @@ import { colors, spacing, typography } from '../design-system/theme';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
-  const currentDay = 2; // This would come from user's progress data - set to 2 for testing
+  const currentDay = 1; // This would come from user's progress data
+  const [weeklyChecks, setWeeklyChecks] = useState([false, false, false, false, false, false, false]);
 
   const handleStartExercise = () => {
     navigation.navigate('ChallengeFlow', { dayNumber: currentDay });
   };
+
+  const toggleWeeklyCheck = (index: number) => {
+    const newChecks = [...weeklyChecks];
+    newChecks[index] = !newChecks[index];
+    setWeeklyChecks(newChecks);
+  };
+
+  const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   // Generate 30 days of course content
   const courseContent = [
@@ -56,12 +65,37 @@ export const HomeScreen = () => {
       >
         <Text style={styles.appTitle}>Unbound</Text>
 
+        {/* Weekly checkboxes */}
+        <View style={styles.weeklyContainer}>
+          <View style={styles.weeklyCheckboxes}>
+            {weekDays.map((day, index) => (
+              <View key={index} style={styles.dayCheckContainer}>
+                <Text style={styles.dayLabel}>{day}</Text>
+                <TouchableOpacity
+                  style={styles.weeklyCheckbox}
+                  onPress={() => toggleWeeklyCheck(index)}
+                  activeOpacity={0.7}
+                >
+                  <View style={[
+                    styles.checkbox,
+                    weeklyChecks[index] && styles.checkboxChecked
+                  ]}>
+                    {weeklyChecks[index] && <Text style={styles.checkmark}>✓</Text>}
+                  </View>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </View>
+
         <View style={styles.todaySection}>
           <Text style={styles.sectionTitle}>TODAY'S CHALLENGE</Text>
           <PracticeCard
-            title="Labeling the phone as object"
-            subtitle="Day 1 of 30"
-            description="Throughout the day we will send you simple reminders to remember that the world is out there, not in there."
+            title={currentDay === 1 ? "Labeling the phone as object" : "Bathroom Break"}
+            subtitle={`Day ${currentDay} of 30`}
+            description={currentDay === 1
+              ? "Throughout the day we will send you simple reminders to remember that the world is out there, not in there."
+              : "Create your first phone-free space."}
             buttonText="Begin"
             onPress={handleStartExercise}
           />
@@ -132,5 +166,45 @@ const styles = StyleSheet.create({
   },
   timelineContainer: {
     marginTop: 8,
+  },
+  weeklyContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 20,
+  },
+  weeklyCheckboxes: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 18,
+  },
+  dayCheckContainer: {
+    alignItems: 'center',
+  },
+  dayLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#B0B0B0',
+    marginBottom: 6,
+  },
+  weeklyCheckbox: {
+    padding: 2,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderWidth: 1.5,
+    borderColor: '#D0D0D0',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  checkboxChecked: {
+    backgroundColor: '#2C4F4A',
+    borderColor: '#2C4F4A',
+  },
+  checkmark: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
 });

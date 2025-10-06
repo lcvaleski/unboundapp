@@ -25,7 +25,8 @@ export function MainStack() {
         component={ChallengeFlowScreen}
         options={{
           presentation: 'modal',
-          gestureEnabled: false,
+          gestureEnabled: true,
+          gestureDirection: 'vertical',
         }}
       />
       <Stack.Screen

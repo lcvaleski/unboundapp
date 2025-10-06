@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +17,7 @@ interface ChallengeCard {
   title?: string;
   content: string;
   buttonText?: string;
+  image?: any; // For intro cards
 }
 
 const challengeCards: Record<number, ChallengeCard[]> = {
@@ -25,6 +27,7 @@ const challengeCards: Record<number, ChallengeCard[]> = {
       type: 'intro',
       title: 'Labeling the phone as object',
       content: "Today, you'll learn to see your phone for what it really is—just an object, not an extension of yourself.",
+      image: require('../assets/challenges/day1-objects.png'),
     },
     {
       id: 2,
@@ -52,6 +55,7 @@ const challengeCards: Record<number, ChallengeCard[]> = {
       type: 'intro',
       title: 'Bathroom Break',
       content: "Our phones feel like extensions of ourselves, which is why it's important to remember what it's like to be physically away from them. Your bathroom is the easiest place to start.",
+      image: require('../assets/challenges/day2-bathroom.png'),
     },
     {
       id: 2,
@@ -130,6 +134,15 @@ export const ChallengeFlowScreen = ({ route }: any) => {
   // Show the full-screen card flow directly
   return (
       <SafeAreaView style={styles.modalContainer}>
+        {/* Close button */}
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.closeButtonText}>✕</Text>
+        </TouchableOpacity>
+
         <Animated.View
           style={[
             styles.fullScreenCard,
@@ -162,6 +175,11 @@ export const ChallengeFlowScreen = ({ route }: any) => {
 
           {/* Card content */}
           <View style={styles.cardContent}>
+            {currentCard.image && currentCard.type === 'intro' && (
+              <View style={styles.imageContainer}>
+                <Image source={currentCard.image} style={styles.challengeImage} />
+              </View>
+            )}
             {currentCard.title && (
               <Text style={styles.contentTitle}>{currentCard.title}</Text>
             )}
@@ -273,5 +291,31 @@ const styles = StyleSheet.create({
   skipButtonText: {
     color: '#999',
     fontSize: 14,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  challengeImage: {
+    width: 200,
+    height: 150,
+    resizeMode: 'contain',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
   },
 });
