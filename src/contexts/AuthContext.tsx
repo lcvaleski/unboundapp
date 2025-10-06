@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthContextData {
   user: FirebaseAuthTypes.User | null;
@@ -79,6 +80,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      // Clear onboarding status when signing out
+      await AsyncStorage.removeItem('hasSeenOnboarding');
       await auth().signOut();
     } catch (error) {
       console.error('Sign out error:', error);
@@ -134,6 +137,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('No user logged in');
       }
 
+      // Clear onboarding status when deleting account
+      await AsyncStorage.removeItem('hasSeenOnboarding');
       await currentUser.delete();
     } catch (error: any) {
       if (error.code === 'auth/requires-recent-login') {

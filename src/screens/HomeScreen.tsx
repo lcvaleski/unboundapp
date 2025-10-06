@@ -7,16 +7,16 @@ import { colors, spacing, typography } from '../design-system/theme';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
-  const currentDay = 1; // This would come from user's progress data
+  const currentDay = 2; // This would come from user's progress data - set to 2 for testing
 
   const handleStartExercise = () => {
-    navigation.navigate('ExerciseCards');
+    navigation.navigate('ChallengeFlow', { dayNumber: currentDay });
   };
 
   // Generate 30 days of course content
   const courseContent = [
     { day: 1, title: "Labeling the phone as object", description: "Reframe how you see the phone and the world around you." },
-    { day: 2, title: "The Last Time Reflection", description: "Ponder how you will do things for the last time and how your phone shouldn't get in the way" },
+    { day: 2, title: "Bathroom Break", description: "Create your first phone-free space." },
     { day: 3, title: "3 Meals, No Phone", description: "Explore how it feels to eat without any screentime at all" },
     { day: 4, title: "The Cost of Distraction", description: "Spend the day quantifying who you let down due to your screentime." },
     { day: 5, title: "Mindful Observation", description: "Watch your habits without judgment." },
@@ -67,7 +67,9 @@ export const HomeScreen = () => {
           />
         </View>
 
-        <Text style={styles.sectionTitle}>YOUR JOURNEY</Text>
+        <View style={styles.journeySection}>
+          <Text style={styles.sectionTitle}>YOUR JOURNEY</Text>
+        </View>
 
         <View style={styles.timelineContainer}>
           {courseContent.map((content, index) => (
@@ -78,10 +80,10 @@ export const HomeScreen = () => {
               description={content.description}
               isActive={content.day === currentDay}
               isCompleted={content.day < currentDay}
-              isLocked={content.day > currentDay}
+              isLocked={content.day > currentDay && content.day !== 2} // Allow day 2 to be clickable
               onPress={() => {
-                if (content.day === currentDay) {
-                  handleStartExercise();
+                if (content.day === currentDay || content.day === 2) {
+                  navigation.navigate('ChallengeFlow', { dayNumber: content.day });
                 } else if (content.day < currentDay) {
                   console.log(`Review day ${content.day}`);
                 }
@@ -115,6 +117,9 @@ const styles = StyleSheet.create({
   },
   todaySection: {
     marginBottom: 8,
+  },
+  journeySection: {
+    marginTop: 0,
   },
   sectionTitle: {
     fontSize: 12,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,17 +14,20 @@ interface CourseProgressCardProps {
   isActive?: boolean;
   isLocked?: boolean;
   onPress?: () => void;
+  onCompleteToggle?: (completed: boolean) => void;
 }
 
 export const CourseProgressCard: React.FC<CourseProgressCardProps> = ({
   day,
   title,
   description,
-  isCompleted = false,
+  isCompleted: propIsCompleted = false,
   isActive = false,
   isLocked = true,
   onPress,
+  onCompleteToggle,
 }) => {
+  const [isCompleted, setIsCompleted] = useState(propIsCompleted);
   const getLockIcon = () => {
     if (isCompleted) {
       return (
@@ -47,15 +50,24 @@ export const CourseProgressCard: React.FC<CourseProgressCardProps> = ({
     );
   };
 
+  const handleCheckboxPress = (e: any) => {
+    e.stopPropagation();
+    const newCompleted = !isCompleted;
+    setIsCompleted(newCompleted);
+    onCompleteToggle?.(newCompleted);
+  };
+
+  const canMarkComplete = !isLocked || isActive || day === 2; // Allow day 2 for testing
+
   return (
     <TouchableOpacity
       style={[
         styles.container,
-        isLocked && !isActive && styles.lockedContainer,
+        isLocked && !isActive && !canMarkComplete && styles.lockedContainer,
         isCompleted && styles.completedContainer,
       ]}
       onPress={onPress}
-      disabled={isLocked && !isActive}
+      disabled={isLocked && !isActive && day !== 2}
       activeOpacity={0.8}
     >
       <View style={styles.timelineContainer}>
@@ -64,26 +76,42 @@ export const CourseProgressCard: React.FC<CourseProgressCardProps> = ({
       </View>
 
       <View style={styles.content}>
-        <Text style={[
-          styles.dayLabel,
-          isLocked && !isActive && styles.lockedText,
-        ]}>
-          DAY {day}
-        </Text>
-        <Text style={[
-          styles.title,
-          isLocked && !isActive && styles.lockedText,
-          isCompleted && styles.completedText,
-        ]}>
-          {title}
-        </Text>
-        <Text style={[
-          styles.description,
-          isLocked && !isActive && styles.lockedText,
-          isCompleted && styles.completedText,
-        ]}>
-          {description}
-        </Text>
+        <View style={styles.contentHeader}>
+          <View style={styles.textContent}>
+            <Text style={[
+              styles.dayLabel,
+              isLocked && !isActive && !canMarkComplete && styles.lockedText,
+            ]}>
+              DAY {day}
+            </Text>
+            <Text style={[
+              styles.title,
+              isLocked && !isActive && !canMarkComplete && styles.lockedText,
+              isCompleted && styles.completedText,
+            ]}>
+              {title}
+            </Text>
+            <Text style={[
+              styles.description,
+              isLocked && !isActive && !canMarkComplete && styles.lockedText,
+              isCompleted && styles.completedText,
+            ]}>
+              {description}
+            </Text>
+          </View>
+
+          {canMarkComplete && (
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={handleCheckboxPress}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.checkbox, isCompleted && styles.checkboxChecked]}>
+                {isCompleted && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -180,5 +208,35 @@ const styles = StyleSheet.create({
   },
   completedText: {
     color: '#666666',
+  },
+  contentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  textContent: {
+    flex: 1,
+    marginRight: 12,
+  },
+  checkboxContainer: {
+    padding: 4,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: '#2C4F4A',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  checkboxChecked: {
+    backgroundColor: '#2C4F4A',
+  },
+  checkmark: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
