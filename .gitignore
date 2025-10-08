@@ -3,6 +3,11 @@
 .env.local
 .env.*.local
 
+# Service Account Keys - NEVER COMMIT THESE
+**/service-account-key.json
+**/*service-account*.json
+**/ServiceAccount*.json
+
 # Backend (separate repo for Render deployment)
 backend/
 

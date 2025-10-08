@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,91 +6,29 @@ import {
   Animated,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-
-
-interface ChallengeCard {
-  id: number;
-  type: 'intro' | 'instruction' | 'notification' | 'why';
-  title?: string;
-  content: string;
-  buttonText?: string;
-  image?: any; // For intro cards
-}
-
-const challengeCards: Record<number, ChallengeCard[]> = {
-  1: [
-    {
-      id: 1,
-      type: 'intro',
-      title: 'Labeling the phone as object',
-      content: "Today, you'll learn to see your phone for what it really is—just an object, not an extension of yourself.",
-      image: require('../assets/challenges/day1-objects.png'),
-    },
-    {
-      id: 2,
-      type: 'instruction',
-      title: 'How it works',
-      content: "Throughout the day, we'll send you gentle reminders to notice your phone as a physical object. When you pick it up, feel its weight. Notice its edges. See it as a tool, not a companion.",
-    },
-    {
-      id: 3,
-      type: 'notification',
-      title: 'Reminders',
-      content: "We'll send you 3-4 mindful moments today. Each one takes just 10 seconds—a brief pause to recenter.",
-      buttonText: 'Enable Reminders',
-    },
-    {
-      id: 4,
-      type: 'why',
-      title: 'Why this works',
-      content: 'When we label our phones as objects, we break the emotional attachment. Research shows that creating cognitive distance from our devices reduces compulsive checking by up to 40%.',
-    },
-  ],
-  2: [
-    {
-      id: 1,
-      type: 'intro',
-      title: 'Bathroom Break',
-      content: "Our phones feel like extensions of ourselves, which is why it's important to remember what it's like to be physically away from them. Your bathroom is the easiest place to start.",
-      image: require('../assets/challenges/day2-bathroom.png'),
-    },
-    {
-      id: 2,
-      type: 'instruction',
-      title: 'How it works',
-      content: "Today, make an effort to leave your phone outside of the door every time you enter your bathroom. If you forget, don't beat yourself up, just try to remember for next time. We'll send you some reminders throughout the day.",
-    },
-    {
-      id: 3,
-      type: 'notification',
-      title: 'Reminders',
-      content: "We'll remind you throughout the day to leave your phone outside when using the bathroom.",
-      buttonText: 'Enable Reminders',
-    },
-    {
-      id: 4,
-      type: 'why',
-      title: 'Why this works',
-      content: "When you pair your phone with routine habits, it strengthens compulsive & mindless use. By making your bathroom a phone-free space, you'll start to gain insight into this pattern—the first step to breaking it.",
-    },
-  ],
-};
+import { useRemoteContent } from '../hooks/useRemoteContent';
+import { ContentService } from '../services/contentService';
 
 export const ChallengeFlowScreen = ({ route }: any) => {
   const navigation = useNavigation();
   const { dayNumber = 1 } = route.params || {};
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const { challenges, loading } = useRemoteContent(true); // Real-time updates
 
   const modalAnimation = useRef(new Animated.Value(0)).current;
 
-  const cards = challengeCards[dayNumber] || challengeCards[1];
+  // Get challenge data from remote or fallback to defaults
+  const challenge = challenges[dayNumber] || ContentService.getDefaultChallenges()[dayNumber];
+  const cards = challenge?.cards || [];
   const currentCard = cards[currentCardIndex];
+  const finalButtonText = challenge?.finalButtonText || 'Start Challenge';
 
   React.useEffect(() => {
-    // Animate in on mount
+    // Animate in on mountu
     Animated.timing(modalAnimation, {
       toValue: 1,
       duration: 400,
@@ -130,6 +68,35 @@ export const ChallengeFlowScreen = ({ route }: any) => {
     console.log('Setting up notifications');
     handleNext();
   };
+
+  // Show loading while fetching content
+  if (loading && !challenge) {
+    return (
+      <SafeAreaView style={styles.modalContainer}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2C4F4A" />
+          <Text style={styles.loadingText}>Loading challenge...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error if no content available
+  if (!currentCard) {
+    return (
+      <SafeAreaView style={styles.modalContainer}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Challenge content not available</Text>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.primaryButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   // Show the full-screen card flow directly
   return (
@@ -175,9 +142,13 @@ export const ChallengeFlowScreen = ({ route }: any) => {
 
           {/* Card content */}
           <View style={styles.cardContent}>
-            {currentCard.image && currentCard.type === 'intro' && (
+            {currentCard.imageUrl && (
               <View style={styles.imageContainer}>
-                <Image source={currentCard.image} style={styles.challengeImage} />
+                <Image
+                  source={{ uri: currentCard.imageUrl }}
+                  style={styles.challengeImage}
+                  resizeMode="contain"
+                />
               </View>
             )}
             {currentCard.title && (
@@ -195,7 +166,7 @@ export const ChallengeFlowScreen = ({ route }: any) => {
                   onPress={handleNotificationSetup}
                 >
                   <Text style={styles.primaryButtonText}>
-                    {currentCard.buttonText}
+                    {currentCard.buttonText || 'Enable Reminders'}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -211,7 +182,7 @@ export const ChallengeFlowScreen = ({ route }: any) => {
                 onPress={handleNext}
               >
                 <Text style={styles.primaryButtonText}>
-                  {currentCardIndex === cards.length - 1 ? 'Start Challenge' : 'Continue'}
+                  {currentCardIndex === cards.length - 1 ? finalButtonText : currentCard.buttonText || 'Continue'}
                 </Text>
               </TouchableOpacity>
             )}
@@ -297,8 +268,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   challengeImage: {
-    width: 200,
-    height: 150,
+    width: '100%',
+    height: 200,
     resizeMode: 'contain',
   },
   closeButton: {
@@ -317,5 +288,27 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  errorText: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 24,
+    textAlign: 'center',
   },
 });

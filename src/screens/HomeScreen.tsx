@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PracticeCard } from '../design-system/components/PracticeCard';
 import { CourseProgressCard } from '../design-system/components/CourseProgressCard';
 import { colors, spacing, typography } from '../design-system/theme';
+import { useRemoteContent } from '../hooks/useRemoteContent';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
   const currentDay = 1; // This would come from user's progress data
   const [weeklyChecks, setWeeklyChecks] = useState([false, false, false, false, false, false, false]);
+  const { courseContent, challenges, loading } = useRemoteContent(true); // Real-time updates
 
   const handleStartExercise = () => {
     navigation.navigate('ChallengeFlow', { dayNumber: currentDay });
@@ -22,39 +24,32 @@ export const HomeScreen = () => {
 
   const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-  // Generate 30 days of course content
-  const courseContent = [
-    { day: 1, title: "Labeling the phone as object", description: "Reframe how you see the phone and the world around you." },
-    { day: 2, title: "Bathroom Break", description: "Create your first phone-free space." },
-    { day: 3, title: "3 Meals, No Phone", description: "Explore how it feels to eat without any screentime at all" },
-    { day: 4, title: "The Cost of Distraction", description: "Spend the day quantifying who you let down due to your screentime." },
-    { day: 5, title: "Mindful Observation", description: "Watch your habits without judgment." },
-    { day: 6, title: "Creating Friction", description: "Make phone use less automatic." },
-    { day: 7, title: "Weekly Reflection", description: "Review your progress and insights." },
-    { day: 8, title: "Emotional Regulation", description: "Managing feelings without digital escape." },
-    { day: 9, title: "The Reset", description: "Breaking the instant gratification cycle." },
-    { day: 10, title: "Alternative Activities", description: "Replacing screen time with fulfilling actions." },
-    { day: 11, title: "Social Media Audit", description: "Evaluate your digital relationships." },
-    { day: 12, title: "Notification Detox", description: "Reclaim your attention from alerts." },
-    { day: 13, title: "Morning Routines", description: "Start your day without screens." },
-    { day: 14, title: "Two Week Check-in", description: "Assess your transformation journey." },
-    { day: 15, title: "Deep Work Practice", description: "Building focus in a distracted world." },
-    { day: 16, title: "Digital Boundaries", description: "Setting limits that stick." },
-    { day: 17, title: "The Power of Boredom", description: "Embracing empty moments." },
-    { day: 18, title: "Stress Without Scrolling", description: "New coping mechanisms." },
-    { day: 19, title: "Reclaiming Evenings", description: "Wind down without devices." },
-    { day: 20, title: "Weekend Warriors", description: "Maintaining progress on days off." },
-    { day: 21, title: "Three Week Milestone", description: "Celebrating your progress." },
-    { day: 22, title: "Building New Habits", description: "Replace old patterns with better ones." },
-    { day: 23, title: "Connection Without Clicks", description: "Real relationships in digital age." },
-    { day: 24, title: "Creative Expression", description: "Rediscover your creative side." },
-    { day: 25, title: "Physical Movement", description: "Using your body to calm your mind." },
-    { day: 26, title: "Mindful Technology", description: "Using devices with intention." },
-    { day: 27, title: "Future Proofing", description: "Maintaining long-term balance." },
-    { day: 28, title: "Community Support", description: "Finding others on similar journeys." },
-    { day: 29, title: "Personal Philosophy", description: "Defining your relationship with technology." },
-    { day: 30, title: "Course Complete", description: "Your new beginning starts here." },
-  ];
+  // Get current challenge for today's card
+  const currentChallenge = challenges[currentDay];
+
+  // Merge challenge data with course content for complete info
+  const displayContent = courseContent.length > 0 ?
+    courseContent.map(content => {
+      const challenge = challenges[content.day];
+      return challenge ? {
+        ...content,
+        title: challenge.title,  // Use title from challenges (always up-to-date)
+        description: challenge.description  // Use description from challenges
+      } : content;
+    }) :
+    Object.values(challenges).length > 0 ?
+    Object.values(challenges).map(ch => ({
+      day: ch.day,
+      title: ch.title,
+      description: ch.description,
+      enabled: ch.enabled,
+      order: ch.order
+    })).sort((a, b) => a.order - b.order) :
+    [
+      { day: 1, title: "Labeling the phone as object", description: "Reframe how you see the phone and the world around you.", enabled: true, order: 1 },
+      { day: 2, title: "Bathroom Break", description: "Create your first phone-free space.", enabled: true, order: 2 },
+      { day: 3, title: "One Word Check-In", description: "Start to identify how your phone makes you feel.", enabled: true, order: 3 },
+    ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -90,15 +85,19 @@ export const HomeScreen = () => {
 
         <View style={styles.todaySection}>
           <Text style={styles.sectionTitle}>TODAY'S CHALLENGE</Text>
-          <PracticeCard
-            title={currentDay === 1 ? "Labeling the phone as object" : "Bathroom Break"}
-            subtitle={`Day ${currentDay} of 30`}
-            description={currentDay === 1
-              ? "Throughout the day we will send you simple reminders to remember that the world is out there, not in there."
-              : "Create your first phone-free space."}
-            buttonText="Begin"
-            onPress={handleStartExercise}
-          />
+          {loading && !currentChallenge ? (
+            <View style={styles.loadingCard}>
+              <ActivityIndicator size="small" color="#2C4F4A" />
+            </View>
+          ) : (
+            <PracticeCard
+              title={currentChallenge?.title || "Today's Challenge"}
+              subtitle={`Day ${currentDay} of 30`}
+              description={currentChallenge?.description || "Complete today's mindfulness exercise."}
+              buttonText="Begin"
+              onPress={handleStartExercise}
+            />
+          )}
         </View>
 
         <View style={styles.journeySection}>
@@ -106,7 +105,7 @@ export const HomeScreen = () => {
         </View>
 
         <View style={styles.timelineContainer}>
-          {courseContent.map((content, index) => (
+          {displayContent.map((content, index) => (
             <CourseProgressCard
               key={content.day}
               day={content.day}
@@ -114,13 +113,9 @@ export const HomeScreen = () => {
               description={content.description}
               isActive={content.day === currentDay}
               isCompleted={content.day < currentDay}
-              isLocked={content.day > currentDay && content.day !== 2} // Allow day 2 to be clickable
+              isLocked={false} // All days are unlocked and clickable
               onPress={() => {
-                if (content.day === currentDay || content.day === 2) {
-                  navigation.navigate('ChallengeFlow', { dayNumber: content.day });
-                } else if (content.day < currentDay) {
-                  console.log(`Review day ${content.day}`);
-                }
+                navigation.navigate('ChallengeFlow', { dayNumber: content.day });
               }}
             />
           ))}
@@ -206,5 +201,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
+  },
+  loadingCard: {
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    marginHorizontal: 16,
+    borderRadius: 12,
   },
 });

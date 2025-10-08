@@ -57,7 +57,7 @@ export const CourseProgressCard: React.FC<CourseProgressCardProps> = ({
     onCompleteToggle?.(newCompleted);
   };
 
-  const canMarkComplete = !isLocked || isActive || day === 2; // Allow day 2 for testing
+  const canMarkComplete = !isLocked || isActive || day === 2 || day === 3; // Allow day 2 & 3 for testing
 
   return (
     <TouchableOpacity
@@ -67,7 +67,7 @@ export const CourseProgressCard: React.FC<CourseProgressCardProps> = ({
         isCompleted && styles.completedContainer,
       ]}
       onPress={onPress}
-      disabled={isLocked && !isActive && day !== 2}
+      disabled={isLocked && !isActive && day !== 2 && day !== 3}
       activeOpacity={0.8}
     >
       <View style={styles.timelineContainer}>

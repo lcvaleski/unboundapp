@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unbound Content Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #F9F6F2;
+            padding: 20px;
+            color: #2C4F4A;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #2C4F4A;
+        }
+
+        .auth-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .challenge-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .challenge-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .card-section {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            background: #2C4F4A;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #1e3530;
+        }
+
+        .save-button {
+            background: #4CAF50;
+        }
+
+        .save-button:hover {
+            background: #45a049;
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        #content-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Unbound Content Editor</h1>
+
+        <div id="status" class="status"></div>
+
+        <div class="auth-section">
+            <h2>Connect to Firebase</h2>
+            <p style="margin-bottom: 15px;">Enter your Firebase configuration to connect:</p>
+            <input type="text" id="apiKey" placeholder="API Key" />
+            <input type="text" id="authDomain" placeholder="Auth Domain (e.g., your-app.firebaseapp.com)" />
+            <input type="text" id="projectId" placeholder="Project ID" />
+            <input type="email" id="email" placeholder="Admin Email" />
+            <input type="password" id="password" placeholder="Password" />
+            <button onclick="connectFirebase()">Connect & Load Content</button>
+        </div>
+
+        <div id="content-section">
+            <div id="loading" class="loading">Loading challenges...</div>
+            <div id="challenges-container" class="challenge-list"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        let db = null;
+        let currentChallenges = {};
+
+        async function connectFirebase() {
+            try {
+                showStatus('Connecting to Firebase...', 'success');
+
+                const config = {
+                    apiKey: document.getElementById('apiKey').value,
+                    authDomain: document.getElementById('authDomain').value,
+                    projectId: document.getElementById('projectId').value,
+                };
+
+                // Initialize Firebase
+                firebase.initializeApp(config);
+
+                // Sign in
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+
+                db = firebase.firestore();
+
+                showStatus('Connected successfully!', 'success');
+                document.getElementById('content-section').style.display = 'block';
+
+                loadChallenges();
+
+            } catch (error) {
+                showStatus('Connection failed: ' + error.message, 'error');
+            }
+        }
+
+        async function loadChallenges() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('challenges-container').innerHTML = '';
+
+            try {
+                const snapshot = await db.collection('challenges').orderBy('order').get();
+
+                snapshot.forEach(doc => {
+                    const challenge = doc.data();
+                    currentChallenges[doc.id] = challenge;
+                    renderChallenge(doc.id, challenge);
+                });
+
+                document.getElementById('loading').style.display = 'none';
+
+            } catch (error) {
+                showStatus('Failed to load challenges: ' + error.message, 'error');
+            }
+        }
+
+        function renderChallenge(id, challenge) {
+            const container = document.getElementById('challenges-container');
+
+            const challengeHtml = `
+                <div class="challenge-card" id="challenge-${id}">
+                    <div class="challenge-header">
+                        <div class="challenge-title">Day ${challenge.day}: ${challenge.title}</div>
+                        <div class="toggle-switch">
+                            <label>Enabled:</label>
+                            <input type="checkbox" ${challenge.enabled ? 'checked' : ''}
+                                   onchange="updateField('${id}', 'enabled', this.checked)">
+                        </div>
+                    </div>
+
+                    <div class="field-label">Title</div>
+                    <input type="text" value="${challenge.title}"
+                           onblur="updateField('${id}', 'title', this.value)">
+
+                    <div class="field-label">Description</div>
+                    <textarea onblur="updateField('${id}', 'description', this.value)">${challenge.description}</textarea>
+
+                    <div class="field-label">Final Button Text (e.g., "Let's Do This")</div>
+                    <input type="text" value="${challenge.finalButtonText || 'Start Challenge'}"
+                           onblur="updateField('${id}', 'finalButtonText', this.value)">
+
+                    <h3 style="margin-top: 20px;">Cards</h3>
+                    ${challenge.cards.map((card, index) => `
+                        <div class="card-section">
+                            <div class="field-label">Card ${index + 1}: ${card.type}${card.title ? ' - ' + card.title : ''}</div>
+                            ${card.title ? `
+                                <input type="text" value="${card.title}"
+                                       placeholder="Card Title"
+                                       onblur="updateCard('${id}', ${index}, 'title', this.value)">
+                            ` : ''}
+                            <textarea placeholder="Card Content"
+                                      onblur="updateCard('${id}', ${index}, 'content', this.value)">${card.content}</textarea>
+                            ${card.buttonText !== undefined ? `
+                                <input type="text" value="${card.buttonText}"
+                                       placeholder="Button Text"
+                                       onblur="updateCard('${id}', ${index}, 'buttonText', this.value)">
+                            ` : ''}
+                        </div>
+                    `).join('')}
+
+                    <button class="save-button" onclick="saveChallenge('${id}')">Save All Changes</button>
+                </div>
+            `;
+
+            container.innerHTML += challengeHtml;
+        }
+
+        function updateField(id, field, value) {
+            if (currentChallenges[id]) {
+                currentChallenges[id][field] = value;
+            }
+        }
+
+        function updateCard(id, cardIndex, field, value) {
+            if (currentChallenges[id] && currentChallenges[id].cards[cardIndex]) {
+                currentChallenges[id].cards[cardIndex][field] = value;
+            }
+        }
+
+        async function saveChallenge(id) {
+            try {
+                await db.collection('challenges').doc(id).set(currentChallenges[id]);
+                showStatus(`Day ${currentChallenges[id].day} saved successfully!`, 'success');
+            } catch (error) {
+                showStatus('Save failed: ' + error.message, 'error');
+            }
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

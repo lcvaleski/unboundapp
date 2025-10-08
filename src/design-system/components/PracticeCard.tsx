@@ -71,11 +71,6 @@ export const PracticeCard: React.FC<PracticeCardProps> = ({
       },
     ],
     backfaceVisibility: 'hidden' as const,
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
   };
 
   return (
@@ -94,10 +89,12 @@ export const PracticeCard: React.FC<PracticeCardProps> = ({
           end={{ x: 1, y: 1 }}
         >
           <View style={styles.content}>
-            <Text style={styles.label}>TODAY'S CHALLENGE</Text>
-            <Text style={styles.title}>{title}</Text>
-            {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
-            <Text style={styles.description}>{description}</Text>
+            <View>
+              <Text style={styles.label}>TODAY'S CHALLENGE</Text>
+              <Text style={styles.title}>{title}</Text>
+              {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+              <Text style={styles.description}>{description}</Text>
+            </View>
             <TouchableOpacity
               style={styles.button}
               onPress={handlePress}
@@ -114,7 +111,8 @@ export const PracticeCard: React.FC<PracticeCardProps> = ({
         <Animated.View
           style={[
             styles.cardFace,
-            backAnimatedStyle
+            backAnimatedStyle,
+            { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }
           ]}
           pointerEvents="none"
         >
@@ -143,13 +141,11 @@ const styles = StyleSheet.create({
   cardContainer: {
     marginHorizontal: 16,
     marginVertical: 8,
-    height: 280,
+    minHeight: 260,
     position: 'relative',
   },
   cardFace: {
-    position: 'absolute',
     width: '100%',
-    height: '100%',
     borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 2,
@@ -166,8 +162,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   content: {
-    padding: 24,
-    paddingBottom: 20,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 24,
+    flex: 1,
+    justifyContent: 'space-between',
   },
   label: {
     fontSize: 11,
