@@ -3948,6 +3948,11 @@ PODS:
   - RNGoogleSignin (11.0.1):
     - GoogleSignIn (~> 7.0.0)
     - React-Core
+  - RNNotifee (9.1.8):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 9.1.8)
+  - RNNotifee/NotifeeCore (9.1.8):
+    - React-Core
   - RNScreens (4.16.0):
     - boost
     - DoubleConversion
@@ -4096,6 +4101,7 @@ DEPENDENCIES:
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNScreens (from `../node_modules/react-native-screens`)
   - SocketRocket (~> 0.7.1)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -4306,6 +4312,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -4428,6 +4436,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: 8678e074c4ea9886d6fa83884dfa953967044ac8
   RNGestureHandler: 9339994ea5d1ff6ad2679b7d0cc3d49053111369
   RNGoogleSignin: 24d3b3261f78b0fae0aa013f8ab6f8d25e369b0c
+  RNNotifee: 4a6ee5c7deaf00e005050052d73ee6315dff7ec9
   RNScreens: 871305075ddf1291411b051d86da9e0d9289de02
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 9b30b783a17681321b52ac507a37219d7d795ace
