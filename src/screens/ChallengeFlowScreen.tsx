@@ -28,7 +28,7 @@ export const ChallengeFlowScreen = ({ route }: any) => {
   const finalButtonText = challenge?.finalButtonText || 'Start Challenge';
 
   React.useEffect(() => {
-    // Animate in on mountu
+    // Animate in on mountui
     Animated.timing(modalAnimation, {
       toValue: 1,
       duration: 400,
@@ -225,20 +225,20 @@ const styles = StyleSheet.create({
   cardContent: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 24,
   },
   contentTitle: {
     fontSize: 32,
     fontWeight: '700',
     color: '#2C4F4A',
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   contentText: {
     fontSize: 18,
     lineHeight: 28,
     color: '#3A3A3A',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   actionContainer: {
     paddingBottom: 20,

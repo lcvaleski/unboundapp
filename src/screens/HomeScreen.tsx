@@ -3,6 +3,7 @@ import { View, StyleSheet, SafeAreaView, Text, ScrollView, TouchableOpacity, Act
 import { useNavigation } from '@react-navigation/native';
 import { PracticeCard } from '../design-system/components/PracticeCard';
 import { CourseProgressCard } from '../design-system/components/CourseProgressCard';
+import { StartHereCard } from '../design-system/components/StartHereCard';
 import { colors, spacing, typography } from '../design-system/theme';
 import { useRemoteContent } from '../hooks/useRemoteContent';
 
@@ -14,6 +15,12 @@ export const HomeScreen = () => {
 
   const handleStartExercise = () => {
     navigation.navigate('ChallengeFlow', { dayNumber: currentDay });
+  };
+
+  const handleStartHere = () => {
+    // Navigate to intro video or onboarding flow
+    console.log('Start Here pressed - will play intro video');
+    // TODO: Implement video playback or navigation to intro screen
   };
 
   const toggleWeeklyCheck = (index: number) => {
@@ -82,6 +89,12 @@ export const HomeScreen = () => {
             ))}
           </View>
         </View>
+
+        {/* Start Here Card */}
+        <StartHereCard
+          onPress={handleStartHere}
+          freezeFrameUri="https://firebasestorage.googleapis.com/v0/b/unboundapp-2a86c.firebasestorage.app/o/CleanShot%202025-10-09%20at%2011.56.59%402x.png?alt=media&token=279ec504-eb71-4e0e-b14f-ca5a2cc81503"
+        />
 
         <View style={styles.todaySection}>
           <Text style={styles.sectionTitle}>TODAY'S CHALLENGE</Text>
@@ -163,13 +176,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   weeklyContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 32,
     marginBottom: 20,
   },
   weeklyCheckboxes: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 18,
+    justifyContent: 'space-between',
   },
   dayCheckContainer: {
     alignItems: 'center',

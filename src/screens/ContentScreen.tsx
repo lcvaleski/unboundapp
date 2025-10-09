@@ -20,12 +20,28 @@ export const ContentScreen = () => {
         duration: '11 min',
         description: 'Artist and author on reclaiming your attention not through productivity, but through presence.',
       },
+    ],
+    'How-To Guides': [
       {
-        id: '9',
-        title: "Dr. Gabor Maté: What You're Really Scrolling For",
-        category: 'Interview',
-        duration: '14 min',
-        description: 'Addiction expert reveals the emotional wounds beneath compulsive phone use.',
+        id: '10',
+        title: 'How to Make Your App Icons Monochrome',
+        category: 'Guide',
+        duration: '3 min',
+        description: 'Step-by-step guide to reduce visual distractions by making all your app icons the same color.',
+      },
+      {
+        id: '11',
+        title: 'How to Turn Off Raise to Wake',
+        category: 'Guide',
+        duration: '2 min',
+        description: 'Disable automatic screen activation to reduce impulsive phone checking.',
+      },
+      {
+        id: '12',
+        title: 'How to Turn Off Screen "Always On"',
+        category: 'Guide',
+        duration: '2 min',
+        description: 'Save battery and reduce temptation by disabling always-on display features.',
       },
     ],
     'Insights': [
