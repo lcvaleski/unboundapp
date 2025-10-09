@@ -12,12 +12,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useRemoteContent } from '../hooks/useRemoteContent';
 import { ContentService } from '../services/contentService';
+import { useNotifications } from '../hooks/useNotifications';
 
 export const ChallengeFlowScreen = ({ route }: any) => {
   const navigation = useNavigation();
   const { dayNumber = 1 } = route.params || {};
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const { challenges, loading } = useRemoteContent(true); // Real-time updates
+  const { requestPermission, scheduleDailyReminder } = useNotifications();
 
   const modalAnimation = useRef(new Animated.Value(0)).current;
 
@@ -63,9 +65,16 @@ export const ChallengeFlowScreen = ({ route }: any) => {
     navigation.goBack();
   };
 
-  const handleNotificationSetup = () => {
+  const handleNotificationSetup = async () => {
     // Setup notifications
     console.log('Setting up notifications');
+    const granted = await requestPermission();
+
+    if (granted) {
+      // Schedule daily reminder at 9 AM
+      await scheduleDailyReminder(9, 0);
+    }
+
     handleNext();
   };
 

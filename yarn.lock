@@ -2128,6 +2128,11 @@
   dependencies:
     react-native-url-polyfill "2.0.0"
 
+"@react-native-firebase/messaging@^23.4.0":
+  version "23.4.0"
+  resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-23.4.0.tgz"
+  integrity sha512-wxdgl6teo+OsS4nG3KBQM8bFwmZNY4ZzR6UAYB0e7vvp0J/dMfduErkZ6uzEkEjjt2UsOeWB2PBLcgxKjYsX4A==
+
 "@react-native-google-signin/google-signin@^11.0.0":
   version "11.0.1"
   resolved "https://registry.npmjs.org/@react-native-google-signin/google-signin/-/google-signin-11.0.1.tgz"

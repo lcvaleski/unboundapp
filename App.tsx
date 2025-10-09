@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import notificationService from './src/services/notificationService';
 
 function App(): React.JSX.Element {
   const [isAppReady, setIsAppReady] = useState(false);
@@ -10,7 +11,9 @@ function App(): React.JSX.Element {
     // Initialize app
     const setupApp = async () => {
       try {
-        // Add any initialization logic here
+        // Initialize notifications
+        await notificationService.initialize();
+
         setIsAppReady(true);
       } catch (error) {
         console.error('Failed to setup app:', error);
