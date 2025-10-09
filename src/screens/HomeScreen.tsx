@@ -4,12 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import { PracticeCard } from '../design-system/components/PracticeCard';
 import { CourseProgressCard } from '../design-system/components/CourseProgressCard';
 import { StartHereCard } from '../design-system/components/StartHereCard';
+import { ReflectionCard } from '../design-system/components/ReflectionCard';
 import { colors, spacing, typography } from '../design-system/theme';
 import { useRemoteContent } from '../hooks/useRemoteContent';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
-  const currentDay = 1; // This would come from user's progress data
+  const currentDay = 2; // This would come from user's progress data
   const [weeklyChecks, setWeeklyChecks] = useState([false, false, false, false, false, false, false]);
   const { courseContent, challenges, loading } = useRemoteContent(true); // Real-time updates
 
@@ -21,6 +22,12 @@ export const HomeScreen = () => {
     // Navigate to intro video or onboarding flow
     console.log('Start Here pressed - will play intro video');
     // TODO: Implement video playback or navigation to intro screen
+  };
+
+  const handleReflection = () => {
+    // Navigate to reflection video or screen
+    console.log('Reflection pressed for day', currentDay);
+    // TODO: Implement reflection video playback or navigation
   };
 
   const toggleWeeklyCheck = (index: number) => {
@@ -113,24 +120,31 @@ export const HomeScreen = () => {
           )}
         </View>
 
-        <View style={styles.journeySection}>
-          <Text style={styles.sectionTitle}>YOUR JOURNEY</Text>
-        </View>
+        <Text style={[styles.sectionTitle, { marginTop: 0 }]}>YOUR JOURNEY</Text>
 
         <View style={styles.timelineContainer}>
           {displayContent.map((content, index) => (
-            <CourseProgressCard
-              key={content.day}
-              day={content.day}
-              title={content.title}
-              description={content.description}
-              isActive={content.day === currentDay}
-              isCompleted={content.day < currentDay}
-              isLocked={false} // All days are unlocked and clickable
-              onPress={() => {
-                navigation.navigate('ChallengeFlow', { dayNumber: content.day });
-              }}
-            />
+            <React.Fragment key={content.day}>
+              <CourseProgressCard
+                day={content.day}
+                title={content.title}
+                description={content.description}
+                isActive={content.day === currentDay}
+                isCompleted={content.day < currentDay}
+                isLocked={false} // All days are unlocked and clickable
+                onPress={() => {
+                  navigation.navigate('ChallengeFlow', { dayNumber: content.day });
+                }}
+              />
+              {/* Add Reflection Card after every other day (days 2, 4, 6, etc.) */}
+              {content.day % 2 === 0 && (
+                <ReflectionCard
+                  onPress={handleReflection}
+                  freezeFrameUri="https://firebasestorage.googleapis.com/v0/b/unboundapp-2a86c.firebasestorage.app/o/CleanShot%202025-10-09%20at%2011.56.59%402x.png?alt=media&token=279ec504-eb71-4e0e-b14f-ca5a2cc81503"
+                  dayNumber={content.day}
+                />
+              )}
+            </React.Fragment>
           ))}
         </View>
       </ScrollView>
@@ -158,10 +172,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   todaySection: {
-    marginBottom: 8,
-  },
-  journeySection: {
-    marginTop: 0,
+    marginBottom: 0,
   },
   sectionTitle: {
     fontSize: 12,
@@ -173,7 +184,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   timelineContainer: {
-    marginTop: 8,
+    marginTop: 0,
   },
   weeklyContainer: {
     paddingHorizontal: 32,

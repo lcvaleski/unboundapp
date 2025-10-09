@@ -140,7 +140,8 @@ export const PracticeCard: React.FC<PracticeCardProps> = ({
 const styles = StyleSheet.create({
   cardContainer: {
     marginHorizontal: 16,
-    marginVertical: 8,
+    marginTop: 0,
+    marginBottom: 0,
     minHeight: 260,
     position: 'relative',
   },
