@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ContentService } from './contentService';
 import { Challenge, NotificationMessage } from '../types/content.types';
 import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const NOTIFICATION_CHANNEL_ID = 'daily-challenges';
 const LAST_SCHEDULED_DAY_KEY = '@last_scheduled_day';
@@ -52,6 +53,10 @@ class RemoteNotificationService {
     const settings = await notifee.requestPermission();
     const granted = settings.authorizationStatus >= 1; // AUTHORIZED or PROVISIONAL
 
+    // Log to Crashlytics for instant feedback
+    crashlytics().log(`Notification permission requested: ${granted ? 'GRANTED' : 'DENIED'}`);
+    crashlytics().log(`Auth status: ${settings.authorizationStatus}`);
+
     // Log permission request result
     await analytics().logEvent('notification_permission_requested', {
       granted,
@@ -65,12 +70,19 @@ class RemoteNotificationService {
    * Schedule notifications for a specific day using remote content
    */
   async scheduleDayNotifications(dayNumber: number, startDate: Date = new Date()) {
+    // Log to Crashlytics
+    crashlytics().log(`Starting scheduleDayNotifications for day ${dayNumber}`);
+
     // Make sure we have the latest challenges
     await this.loadChallenges();
 
     const challenge = this.challenges[dayNumber];
+    crashlytics().log(`Challenge loaded: ${challenge ? 'YES' : 'NO'}`);
+    crashlytics().log(`Notifications count: ${challenge?.notifications?.length || 0}`);
+
     if (!challenge || !challenge.notifications || challenge.notifications.length === 0) {
       console.log(`No notifications configured for day ${dayNumber}`);
+      crashlytics().log(`FAILED: No notifications configured for day ${dayNumber}`);
       await analytics().logEvent('notification_schedule_failed', {
         dayNumber,
         reason: 'no_notifications_configured'
@@ -123,6 +135,7 @@ class RemoteNotificationService {
       );
 
       console.log(`Scheduled ${notification.time} notification for day ${dayNumber} at ${scheduleDate}`);
+      crashlytics().log(`Scheduled: Day ${dayNumber} - ${notification.time} at ${scheduleDate}`);
     }
 
     // Save scheduled notifications info
@@ -133,6 +146,9 @@ class RemoteNotificationService {
       enabled: true,
     };
     await AsyncStorage.setItem(SCHEDULED_NOTIFICATIONS_KEY, JSON.stringify(scheduled));
+
+    // Log success to Crashlytics
+    crashlytics().log(`SUCCESS: Scheduled ${challenge.notifications.length} notifications for day ${dayNumber}`);
 
     // Log analytics event for successful scheduling
     await analytics().logEvent('notifications_scheduled', {
@@ -234,6 +250,9 @@ class RemoteNotificationService {
   async getFormattedScheduledNotifications() {
     const notifications = await notifee.getTriggerNotifications();
 
+    // Log to Crashlytics for debugging
+    crashlytics().log(`Raw notifications from Notifee: ${notifications.length}`);
+
     // Log raw notification count
     await analytics().logEvent('notifications_raw_check', {
       totalCount: notifications.length,
@@ -266,6 +285,12 @@ class RemoteNotificationService {
         };
       })
       .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    // Log to Crashlytics
+    crashlytics().log(`Formatted notifications: ${formatted.length}`);
+    if (formatted.length > 0) {
+      crashlytics().log(`Days with notifications: ${formatted.map(n => n.dayNumber).join(', ')}`);
+    }
 
     // Log formatted notification details
     await analytics().logEvent('notifications_formatted', {

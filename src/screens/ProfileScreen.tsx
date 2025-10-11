@@ -5,6 +5,7 @@ import { Button } from '../design-system/components/Button';
 import { colors, typography, spacing } from '../design-system/theme';
 import remoteNotificationService from '../services/remoteNotificationService';
 import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 export const ProfileScreen = ({ navigation }: any) => {
   const { user, signOut, deleteAccount } = useAuth();
@@ -26,6 +27,9 @@ export const ProfileScreen = ({ navigation }: any) => {
     try {
       setLoadingNotifications(true);
 
+      // Log to Crashlytics
+      crashlytics().log('ProfileScreen: Starting to load scheduled notifications');
+
       // Log analytics event for loading notifications
       await analytics().logEvent('notifications_load_start', {
         screen: 'ProfileScreen'
@@ -33,6 +37,15 @@ export const ProfileScreen = ({ navigation }: any) => {
 
       const scheduled = await remoteNotificationService.getFormattedScheduledNotifications();
       setNotifications(scheduled);
+
+      // Log to Crashlytics with results
+      crashlytics().log(`ProfileScreen: Loaded ${scheduled.length} notifications`);
+      if (scheduled.length > 0) {
+        const summary = scheduled.slice(0, 3).map(n => `Day ${n.dayNumber} at ${n.time}`).join(', ');
+        crashlytics().log(`ProfileScreen: First notifications: ${summary}`);
+      } else {
+        crashlytics().log('ProfileScreen: No notifications found to display');
+      }
 
       // Log success with count
       await analytics().logEvent('notifications_loaded', {
@@ -44,6 +57,10 @@ export const ProfileScreen = ({ navigation }: any) => {
       console.log('Loaded notifications:', scheduled.length);
     } catch (error) {
       console.error('Error loading notifications:', error);
+
+      // Log to Crashlytics
+      crashlytics().log(`ProfileScreen ERROR: ${error}`);
+      crashlytics().recordError(error as Error);
 
       // Log error event
       await analytics().logEvent('notifications_load_error', {
