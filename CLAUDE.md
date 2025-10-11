@@ -419,9 +419,135 @@ Animated.timing(fadeAnim, {
 - [ ] Add localization support
 - [ ] Implement app versioning strategy
 
+## 🔥 Firebase Remote Content & Notification System
+
+### Admin Interface Location
+- **Path**: `/Users/loganvaleski/git_projects/active_git/research/app/admin/unbound/page.tsx`
+- **URL**: Next.js app running locally or deployed
+- **Purpose**: Web-based admin interface for managing app content and notifications
+
+### Firebase Configuration
+```javascript
+// Firebase project: unboundapp-2a86c
+const firebaseConfig = {
+  apiKey: "AIzaSyAiEhWi-3BOKXaWxjEGLpoMafMJaMvnUC0",
+  authDomain: "unboundapp-2a86c.firebaseapp.com",
+  projectId: "unboundapp-2a86c",
+  storageBucket: "unboundapp-2a86c.appspot.com",
+  messagingSenderId: "709403883610",
+  appId: "1:709403883610:web:your-web-app-id"
+};
+```
+
+### Firestore Collections
+
+#### 1. `challenges` Collection
+Each document represents a day's challenge with:
+```typescript
+{
+  day: number,              // Day number (1, 2, 3, etc.)
+  title: string,            // Challenge title
+  description: string,      // Challenge description
+  enabled: boolean,         // Whether challenge is active
+  order: number,           // Display order
+  finalButtonText?: string, // Button text for last card
+  cards: ChallengeCard[],  // Array of content cards
+  notifications?: NotificationMessage[] // Optional notifications
+}
+```
+
+#### 2. `courseContent` Collection
+Mirrors challenge metadata for course display:
+```typescript
+{
+  day: number,
+  title: string,
+  description: string,
+  enabled: boolean,
+  order: number
+}
+```
+
+### Challenge Card Structure
+```typescript
+interface ChallengeCard {
+  id: number;
+  type: string;           // 'intro', 'instruction', 'notification', 'custom', etc.
+  title?: string;
+  content: string;
+  buttonText?: string;
+  imageUrl?: string;
+}
+```
+
+### Notification Configuration
+```typescript
+interface NotificationMessage {
+  time: 'morning' | 'afternoon' | 'evening';
+  hour: number;           // 0-23 (24-hour format)
+  title: string;
+  body: string;
+}
+```
+
+### Admin Features
+1. **Challenge Management**
+   - Create/edit/delete challenge days
+   - Reorder challenge cards
+   - Add/remove/insert cards at specific positions
+   - Toggle challenge visibility (enabled/disabled)
+
+2. **Notification Management**
+   - Configure multiple notifications per day
+   - Set specific times (morning/afternoon/evening)
+   - Customize notification title and body
+   - Auto-suggest times based on existing notifications
+
+3. **Real-time Updates**
+   - Changes saved to Firebase immediately
+   - App fetches updates in real-time via Firebase listeners
+   - Content Service caches data for offline access
+
+### App Integration
+
+#### Content Service (`/src/services/contentService.ts`)
+- Fetches challenges and course content from Firebase
+- Supports real-time listeners for live updates
+- Falls back to cached/default content when offline
+- Methods:
+  - `fetchChallenges()` - Gets all challenges
+  - `fetchCourseContent()` - Gets course metadata
+  - `subscribeToChallenges()` - Real-time challenge updates
+  - `subscribeToCourseContent()` - Real-time course updates
+
+#### Remote Notification Service (`/src/services/remoteNotificationService.ts`)
+- Uses `@notifee/react-native` for local notifications
+- Fetches notification config from Firebase challenges
+- Schedules notifications locally based on remote data
+- Key methods:
+  - `scheduleDayNotifications(dayNumber)` - Schedule for specific day
+  - `getFormattedScheduledNotifications()` - Get scheduled notifications for display
+  - `requestPermission()` - Request notification permissions
+
+### Analytics Tracking
+Comprehensive Firebase Analytics events:
+- `notification_permission_requested` - Permission request result
+- `notifications_scheduled` - Successful scheduling with day/count
+- `notifications_loaded` - Profile screen notification display
+- `notification_setup_started` - User initiates notification setup
+- `notification_schedule_result` - Success/failure of scheduling
+
+### Usage Flow
+1. Admin creates/updates content in web interface
+2. Content saves to Firebase Firestore
+3. App fetches content via ContentService
+4. When user reaches challenge day, notifications are scheduled
+5. Notifications use content from Firebase configuration
+6. Users can view scheduled notifications in Profile screen
+
 ---
 
-*Last Updated: September 30, 2024 - Working State Achieved*
+*Last Updated: October 10, 2024 - Remote Content & Notification System Documented*
 *Maintained for AI assistants to provide optimal development support*
 
 ## 🚀 FORKING GUIDE - Creating a New App from This Template
