@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useRemoteContent } from '../hooks/useRemoteContent';
 import { ContentService } from '../services/contentService';
 import remoteNotificationService from '../services/remoteNotificationService';
+import analytics from '@react-native-firebase/analytics';
 
 export const ChallengeFlowScreen = ({ route }: any) => {
   const navigation = useNavigation();
@@ -68,16 +69,35 @@ export const ChallengeFlowScreen = ({ route }: any) => {
     // Setup notifications
     console.log(`Setting up notifications for day ${dayNumber}`);
 
+    // Log analytics event for notification setup start
+    await analytics().logEvent('notification_setup_started', {
+      dayNumber,
+      screen: 'ChallengeFlowScreen'
+    });
+
     // Request permission and schedule notifications for TODAY only
     const granted = await remoteNotificationService.requestPermission();
 
     if (granted) {
       // Schedule notifications ONLY for the current day
       // User will enable notifications each day as they progress
-      await remoteNotificationService.scheduleDayNotifications(dayNumber);
+      const scheduled = await remoteNotificationService.scheduleDayNotifications(dayNumber);
 
-      console.log(`Scheduled notifications for day ${dayNumber} only`);
+      // Log scheduling result
+      await analytics().logEvent('notification_schedule_result', {
+        dayNumber,
+        success: scheduled,
+        screen: 'ChallengeFlowScreen'
+      });
+
+      console.log(`Scheduled notifications for day ${dayNumber}: ${scheduled}`);
     } else {
+      // Log permission denied
+      await analytics().logEvent('notification_permission_denied', {
+        dayNumber,
+        screen: 'ChallengeFlowScreen'
+      });
+
       console.log('Notification permission denied');
     }
 

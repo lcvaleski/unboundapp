@@ -2,6 +2,7 @@ import notifee, { TriggerType, AndroidImportance } from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ContentService } from './contentService';
 import { Challenge, NotificationMessage } from '../types/content.types';
+import analytics from '@react-native-firebase/analytics';
 
 const NOTIFICATION_CHANNEL_ID = 'daily-challenges';
 const LAST_SCHEDULED_DAY_KEY = '@last_scheduled_day';
@@ -49,7 +50,15 @@ class RemoteNotificationService {
    */
   async requestPermission() {
     const settings = await notifee.requestPermission();
-    return settings.authorizationStatus >= 1; // AUTHORIZED or PROVISIONAL
+    const granted = settings.authorizationStatus >= 1; // AUTHORIZED or PROVISIONAL
+
+    // Log permission request result
+    await analytics().logEvent('notification_permission_requested', {
+      granted,
+      status: settings.authorizationStatus
+    });
+
+    return granted;
   }
 
   /**
@@ -62,6 +71,10 @@ class RemoteNotificationService {
     const challenge = this.challenges[dayNumber];
     if (!challenge || !challenge.notifications || challenge.notifications.length === 0) {
       console.log(`No notifications configured for day ${dayNumber}`);
+      await analytics().logEvent('notification_schedule_failed', {
+        dayNumber,
+        reason: 'no_notifications_configured'
+      });
       return false;
     }
 
@@ -120,6 +133,13 @@ class RemoteNotificationService {
       enabled: true,
     };
     await AsyncStorage.setItem(SCHEDULED_NOTIFICATIONS_KEY, JSON.stringify(scheduled));
+
+    // Log analytics event for successful scheduling
+    await analytics().logEvent('notifications_scheduled', {
+      dayNumber,
+      count: challenge.notifications.length,
+      date: startDate.toISOString()
+    });
 
     return true;
   }
@@ -206,6 +226,55 @@ class RemoteNotificationService {
    */
   async getScheduledNotifications() {
     return await notifee.getTriggerNotifications();
+  }
+
+  /**
+   * Get formatted scheduled notifications for display
+   */
+  async getFormattedScheduledNotifications() {
+    const notifications = await notifee.getTriggerNotifications();
+
+    // Log raw notification count
+    await analytics().logEvent('notifications_raw_check', {
+      totalCount: notifications.length,
+      source: 'notifee'
+    });
+
+    const formatted = notifications
+      .filter(n => n.notification.data?.type === 'daily-challenge')
+      .map(n => {
+        const timestamp = n.trigger.type === TriggerType.TIMESTAMP
+          ? n.trigger.timestamp
+          : 0;
+
+        return {
+          id: n.notification.id,
+          title: n.notification.title || 'Challenge Reminder',
+          body: n.notification.body || '',
+          date: new Date(timestamp),
+          dayNumber: parseInt(String(n.notification.data?.dayNumber || '0'), 10),
+          time: new Date(timestamp).toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          }),
+          dateString: new Date(timestamp).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric'
+          })
+        };
+      })
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    // Log formatted notification details
+    await analytics().logEvent('notifications_formatted', {
+      formattedCount: formatted.length,
+      dayNumbers: formatted.map(n => n.dayNumber).join(','),
+      source: 'notifee'
+    });
+
+    return formatted;
   }
 
   /**

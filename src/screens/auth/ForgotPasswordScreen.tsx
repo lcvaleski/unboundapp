@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity, TextInput } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../../design-system/components/Button';
-import { EnhancedInput } from '../../components/EnhancedInput';
 import { colors, typography, spacing } from '../../design-system/theme';
 
 export const ForgotPasswordScreen = ({ navigation }: any) => {
@@ -32,23 +31,22 @@ export const ForgotPasswordScreen = ({ navigation }: any) => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Reset Password</Text>
         <Text style={styles.subtitle}>
           Enter your email address and we'll send you instructions to reset your password.
         </Text>
-        <EnhancedInput
-          label="Email"
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
           editable={!loading}
-          showClearButton
+          placeholder="Enter your email"
+          placeholderTextColor={colors.neutral.gray400}
         />
         <Button
           title="Send Reset Link"
@@ -66,14 +64,14 @@ export const ForgotPasswordScreen = ({ navigation }: any) => {
           <Text style={styles.backLinkText}>Back to Login</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F6F2',
+    backgroundColor: colors.neutral.white,
   },
   content: {
     flex: 1,
@@ -85,24 +83,42 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.bold,
     marginBottom: spacing.md,
     textAlign: 'center',
-    color: colors.text.primary,
+    color: colors.neutral.black,
   },
   subtitle: {
     fontSize: typography.fontSize.md,
-    color: colors.text.primary,
+    color: colors.neutral.black,
     textAlign: 'center',
     marginBottom: spacing.xl,
     fontFamily: typography.fontFamily.regular,
   },
+  label: {
+    color: colors.neutral.black,
+    fontSize: typography.fontSize.sm,
+    marginBottom: spacing.xs,
+    fontFamily: typography.fontFamily.medium,
+  },
+  input: {
+    backgroundColor: colors.neutral.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    color: colors.neutral.black,
+    fontSize: typography.fontSize.md,
+    fontFamily: typography.fontFamily.regular,
+    minHeight: 56,
+  },
   button: {
-    marginTop: spacing.sm,
+    marginTop: spacing.md,
   },
   backLink: {
     marginTop: spacing.lg,
     alignSelf: 'center',
   },
   backLinkText: {
-    color: '#2C4F4A',
+    color: colors.neutral.black,
     fontSize: typography.fontSize.sm,
     textDecorationLine: 'underline',
     fontFamily: typography.fontFamily.medium,
