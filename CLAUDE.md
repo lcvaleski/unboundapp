@@ -419,9 +419,75 @@ Animated.timing(fadeAnim, {
 - [ ] Add localization support
 - [ ] Implement app versioning strategy
 
+## 📱 Local Notification System
+
+### Overview
+The app uses `@notifee/react-native` v9.1.8 to schedule local push notifications based on content from Firebase Firestore. Notifications are scheduled day-by-day as users progress through challenges.
+
+### Architecture
+- **Library**: `@notifee/react-native` (handles local notifications)
+- **Content Source**: Firebase Firestore (`challenges` collection)
+- **Storage**: AsyncStorage for tracking scheduled notifications
+- **Service**: `remoteNotificationService.ts` manages all notification logic
+
+### How It Works
+
+#### 1. Content Flow
+1. Admin creates notifications in Firebase via admin interface
+2. App fetches challenges from Firestore using `ContentService.fetchChallenges()`
+3. Each challenge contains a `notifications` array with:
+   - `time`: 'morning', 'afternoon', or 'evening'
+   - `hour`: 0-23 (24-hour format)
+   - `title`: Notification title text
+   - `body`: Notification body content
+
+#### 2. Scheduling Process
+When user reaches a challenge day in `ChallengeFlowScreen`:
+1. System calls `remoteNotificationService.scheduleDayNotifications(dayNumber)`
+2. Requests permission if not already granted
+3. Fetches that day's notifications from Firebase
+4. Schedules local notifications at specified times
+5. Auto-skips notifications if time has already passed (for same-day scheduling)
+
+#### 3. Key Features
+- **Day-by-day scheduling**: Only schedules current day's notifications
+- **Dynamic content**: Pulls from Firebase, not hardcoded
+- **Smart time handling**: Won't schedule past times
+- **Persistent tracking**: Stores scheduled info in AsyncStorage
+- **Flexible cancellation**: Can cancel by day or all at once
+- **Real-time updates**: Re-schedules when Firebase content updates
+
+#### 4. Data Storage
+AsyncStorage keys:
+- `@last_scheduled_day`: Tracks last scheduled day number
+- `@scheduled_notifications`: JSON object with scheduling metadata
+
+Notification ID format: `day-{dayNumber}-{time}` (e.g., "day-1-morning")
+
+#### 5. iOS Configuration
+- Notifee handles iOS setup automatically
+- No additional native code needed
+- Permission requests via `notifee.requestPermission()`
+- Sound and category settings configured per notification
+
+### Success Requirements
+- ✅ Firebase challenges have `notifications` array configured
+- ✅ User grants notification permissions
+- ✅ Notification times are in the future (for same-day scheduling)
+- ✅ App has network access to fetch from Firebase
+- ✅ `@notifee/react-native` properly installed and linked
+
+### Key Methods in RemoteNotificationService
+- `scheduleDayNotifications(dayNumber)` - Schedule notifications for specific day
+- `scheduleAllNotifications()` - Schedule multiple days ahead
+- `requestPermission()` - Request notification permissions
+- `cancelDayNotifications(dayNumber)` - Cancel specific day's notifications
+- `getScheduledNotifications()` - Debug view of all scheduled notifications
+- `updateForNextDay(newDay)` - Handle progression to next challenge day
+
 ---
 
-*Last Updated: September 30, 2024 - Working State Achieved*
+*Last Updated: October 12, 2024 - Local Notification System Documented*
 *Maintained for AI assistants to provide optimal development support*
 
 ## 🚀 FORKING GUIDE - Creating a New App from This Template
