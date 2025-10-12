@@ -33,7 +33,7 @@ workflows:
 
       - name: Install npm dependencies
         script: |
-          npm ci
+          npm install
 
       - name: Install CocoaPods dependencies
         script: |
