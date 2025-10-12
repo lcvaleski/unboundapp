@@ -34,11 +34,8 @@ workflows:
       - name: Increment build number
         script: |
           cd $CM_BUILD_DIR/ios
-          # Comment out the next line until you have APP_STORE_APPLE_ID configured
-          # LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-          # agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
-          # For now, use the Codemagic build number
-          agvtool new-version -all $BUILD_NUMBER
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
 
       - name: Build ipa for distribution
         script: |
