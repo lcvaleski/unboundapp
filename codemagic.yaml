@@ -27,23 +27,6 @@ workflows:
         script: |
           cd ios && pod install
 
-      - name: Set up React Native environment
-        script: |
-          # Create .xcode.env.local file if it doesn't exist
-          echo "export NODE_BINARY=$(which node)" > ios/.xcode.env.local
-          cat ios/.xcode.env.local
-
-      - name: Pre-bundle JavaScript for release
-        script: |
-          # Pre-bundle the JavaScript to catch any bundling errors early
-          npx react-native bundle \
-            --platform ios \
-            --dev false \
-            --entry-file index.js \
-            --bundle-output ios/main.jsbundle \
-            --assets-dest ios
-          echo "JavaScript bundle created successfully"
-
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
@@ -68,16 +51,9 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
-          # Ensure Metro bundler can be found
-          export NODE_BINARY=$(which node)
-          echo "NODE_BINARY is: $NODE_BINARY"
-          echo "Node version: $(node --version)"
-          echo "npm version: $(npm --version)"
-
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME" \
-            --verbose
+            --scheme "$XCODE_SCHEME"
 
     artifacts:
       - build/ios/ipa/*.ipa
