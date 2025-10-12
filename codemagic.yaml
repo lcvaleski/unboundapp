@@ -1,0 +1,70 @@
+workflows:
+  react-native-ios:
+    name: Unbound iOS Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: codemagic
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.unboundapp
+      vars:
+        BUNDLE_ID: "com.unboundapp"
+        XCODE_WORKSPACE: "unboundapp.xcworkspace"
+        XCODE_SCHEME: "unboundapp"
+        APP_STORE_APPLE_ID: 6753550822
+      node: 18.20.3
+
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm install
+
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+
+      - name: Increment build number
+        script: |
+          cd $CM_BUILD_DIR/ios
+          # Comment out the next line until you have APP_STORE_APPLE_ID configured
+          # LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+          # agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+          # For now, use the Codemagic build number
+          agvtool new-version -all $BUILD_NUMBER
+
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      email:
+        recipients:
+          - loganvaleski@gmail.com # Update with your email
+        notify:
+          success: false
+          failure: true
+
+      app_store_connect:
+        auth: integration
+
+        # Start with TestFlight only
+        submit_to_testflight: true # Set to true when ready
+
+        # Don't submit to App Store initially
+        submit_to_app_store: false
