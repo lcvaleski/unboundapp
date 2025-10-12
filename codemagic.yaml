@@ -27,12 +27,6 @@ workflows:
         script: |
           cd ios && pod install
 
-      - name: Set up Node environment for Xcode
-        script: |
-          # Create .xcode.env.local with node path for Xcode build scripts
-          echo "export NODE_BINARY=$(which node)" > ios/.xcode.env.local
-          echo "Node path configured: $(cat ios/.xcode.env.local)"
-
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
@@ -50,6 +44,7 @@ workflows:
             # Fallback to known last build if API fails
             LATEST_BUILD_NUMBER=16
           fi
+          
           echo "Latest build number: $LATEST_BUILD_NUMBER"
           NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
           echo "Setting new build number: $NEW_BUILD_NUMBER"
