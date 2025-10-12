@@ -35,7 +35,12 @@ workflows:
         script: |
           cd $CM_BUILD_DIR/ios
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+          echo "Latest build number from App Store Connect: $LATEST_BUILD_NUMBER"
+          NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
+          echo "Setting new build number: $NEW_BUILD_NUMBER"
+          agvtool new-version -all $NEW_BUILD_NUMBER
+          # Also update the xcodeproj directly
+          xcode-project set-version --build-number=$NEW_BUILD_NUMBER --path="$CM_BUILD_DIR/ios/unboundapp.xcodeproj"
 
       - name: Build ipa for distribution
         script: |
