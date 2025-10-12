@@ -17,21 +17,13 @@ export const ProfileScreen = ({ navigation }: any) => {
 
   const checkNotificationStatus = async () => {
     const settings = await notifee.getNotificationSettings();
-    switch (settings.authorizationStatus) {
-      case 0:
-        setNotificationStatus('Not Determined');
-        break;
-      case 1:
-        setNotificationStatus('Denied');
-        break;
-      case 2:
-        setNotificationStatus('Authorized');
-        break;
-      case 3:
-        setNotificationStatus('Provisional');
-        break;
-      default:
-        setNotificationStatus('Unknown');
+    // Using notifee AuthorizationStatus enum values
+    if (settings.authorizationStatus === 1) {
+      setNotificationStatus('Denied');
+    } else if (settings.authorizationStatus >= 2) {
+      setNotificationStatus('Authorized');
+    } else {
+      setNotificationStatus('Not Determined');
     }
   };
 
@@ -182,7 +174,7 @@ export const ProfileScreen = ({ navigation }: any) => {
             onPress={handleDeleteAccount}
             variant="primary"
             size="large"
-            style={[styles.actionButton, styles.deleteButton]}
+            style={styles.deleteButton}
           />
         </View>
       </View>
@@ -247,6 +239,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   deleteButton: {
+    width: '100%',
+    marginBottom: spacing.md,
     backgroundColor: '#8B4444', // Muted red that fits the palette
   },
   notificationButton: {
