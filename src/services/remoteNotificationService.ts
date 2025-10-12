@@ -1,4 +1,10 @@
-import notifee, { TriggerType, AndroidImportance } from '@notifee/react-native';
+import notifee, {
+  TriggerType,
+  AndroidImportance,
+  AuthorizationStatus,
+  IOSNotificationCategory,
+  IOSNotificationCategoryAction
+} from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ContentService } from './contentService';
 import { Challenge, NotificationMessage } from '../types/content.types';
@@ -11,19 +17,44 @@ class RemoteNotificationService {
   private challenges: Record<number, Challenge> = {};
 
   /**
-   * Initialize notification channel for Android
+   * Initialize notification channel for Android and categories for iOS
    */
   async initialize() {
-    // Create a channel for Android
-    await notifee.createChannel({
-      id: NOTIFICATION_CHANNEL_ID,
-      name: 'Daily Challenges',
-      importance: AndroidImportance.HIGH,
-      sound: 'default',
-    });
+    try {
+      // Create a channel for Android
+      await notifee.createChannel({
+        id: NOTIFICATION_CHANNEL_ID,
+        name: 'Daily Challenges',
+        importance: AndroidImportance.HIGH,
+        sound: 'default',
+        vibration: true,
+        lights: true,
+      });
 
-    // Load remote challenges
-    await this.loadChallenges();
+      // Register iOS notification categories for better interaction
+      await notifee.setNotificationCategories([
+        {
+          id: 'daily-challenge',
+          actions: [
+            {
+              id: 'view',
+              title: 'View Challenge',
+              foreground: true,
+            },
+            {
+              id: 'dismiss',
+              title: 'Dismiss',
+              destructive: true,
+            },
+          ],
+        },
+      ]);
+
+      // Load remote challenges
+      await this.loadChallenges();
+    } catch (error) {
+      console.error('Failed to initialize notifications:', error);
+    }
   }
 
   /**
@@ -45,19 +76,35 @@ class RemoteNotificationService {
   }
 
   /**
-   * Request notification permissions
+   * Request notification permissions with specific options
    */
   async requestPermission() {
-    const settings = await notifee.requestPermission();
-    return settings.authorizationStatus >= 1; // AUTHORIZED or PROVISIONAL
+    try {
+      const settings = await notifee.requestPermission({
+        alert: true,
+        badge: true,
+        sound: true,
+        announcement: false,
+        carPlay: false,
+        provisional: false,
+        criticalAlert: false,
+      });
+
+      // Check if authorized (AUTHORIZED = 2, PROVISIONAL = 3)
+      return settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED;
+    } catch (error) {
+      console.error('Failed to request notification permission:', error);
+      return false;
+    }
   }
 
   /**
    * Schedule notifications for a specific day using remote content
    */
   async scheduleDayNotifications(dayNumber: number, startDate: Date = new Date()) {
-    // Make sure we have the latest challenges
-    await this.loadChallenges();
+    try {
+      // Make sure we have the latest challenges
+      await this.loadChallenges();
 
     const challenge = this.challenges[dayNumber];
     if (!challenge || !challenge.notifications || challenge.notifications.length === 0) {
@@ -92,7 +139,7 @@ class RemoteNotificationService {
               id: 'default',
               launchActivity: 'default',
             },
-            smallIcon: 'ic_launcher', // Make sure you have this icon
+            smallIcon: 'ic_launcher', // Using default launcher icon for notifications
           },
           ios: {
             sound: 'default',
@@ -122,6 +169,10 @@ class RemoteNotificationService {
     await AsyncStorage.setItem(SCHEDULED_NOTIFICATIONS_KEY, JSON.stringify(scheduled));
 
     return true;
+    } catch (error) {
+      console.error(`Failed to schedule notifications for day ${dayNumber}:`, error);
+      return false;
+    }
   }
 
   /**

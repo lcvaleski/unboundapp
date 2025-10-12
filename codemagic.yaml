@@ -19,13 +19,27 @@ workflows:
       node: 18.20.3
 
     scripts:
+      - name: Print versions (debug)
+        script: |
+          node -v
+          which node
+          ruby --version
+          pod --version
+
+      - name: Clean caches (Metro / DerivedData)
+        script: |
+          rm -rf "$TMPDIR/metro-"* "$TMPDIR/haste-map-"* || true
+          rm -rf "$HOME/Library/Developer/Xcode/DerivedData" || true
+
       - name: Install npm dependencies
         script: |
-          npm install
+          npm ci
 
       - name: Install CocoaPods dependencies
         script: |
-          cd ios && pod install
+          cd ios
+          pod install --repo-update
+          cd ..
 
       - name: Set up code signing settings on Xcode project
         script: |
@@ -34,27 +48,28 @@ workflows:
       - name: Increment build number
         script: |
           cd $CM_BUILD_DIR/ios
-          # Try to get latest build number, fallback to TestFlight builds
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" || echo "0")
           if [ -z "$LATEST_BUILD_NUMBER" ] || [ "$LATEST_BUILD_NUMBER" = "0" ]; then
-            # If no builds found, try app store builds
             LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || echo "0")
           fi
           if [ -z "$LATEST_BUILD_NUMBER" ] || [ "$LATEST_BUILD_NUMBER" = "0" ]; then
-            # Fallback to known last build if API fails
             LATEST_BUILD_NUMBER=16
           fi
-          
           echo "Latest build number: $LATEST_BUILD_NUMBER"
           NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
           echo "Setting new build number: $NEW_BUILD_NUMBER"
           agvtool new-version -all $NEW_BUILD_NUMBER
 
-      - name: Build ipa for distribution
+      - name: Build ipa for distribution (ensure Node available to RN bundler)
         script: |
+          export RCT_NO_LAUNCH_PACKAGER=true
+          export NODE_BINARY="$(which node)"   # RN bundling script uses this
+          export SKIP_BUNDLING=""              # make sure bundling is NOT skipped
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
+            --scheme "$XCODE_SCHEME" \
+            --archive-flags="-allowProvisioningUpdates" \
+            --verbose
 
     artifacts:
       - build/ios/ipa/*.ipa
