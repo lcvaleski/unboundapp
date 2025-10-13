@@ -15,4 +15,5 @@ export type MainStackParamList = {
   MainTabs: undefined;
   Onboarding: undefined;
   ExerciseCards: undefined;
+  ChallengeFlow: undefined;
 };

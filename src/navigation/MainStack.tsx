@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import OnboardingScreen from '../screens/onboarding/OnboardingScreen';
 import { ExerciseCardsScreen } from '../screens/ExerciseCardsScreen';
@@ -27,6 +28,31 @@ export function MainStack() {
           presentation: 'modal',
           gestureEnabled: true,
           gestureDirection: 'vertical',
+          cardOverlayEnabled: true,
+          gestureResponseDistance: 250,
+          cardStyle: { backgroundColor: 'transparent' },
+          ...(Platform.OS === 'ios' && {
+            stackPresentation: 'formSheet',
+            animationEnabled: true,
+            cardStyleInterpolator: ({ current: { progress }, layouts }) => ({
+              cardStyle: {
+                transform: [
+                  {
+                    translateY: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [layouts.screen.height, 0],
+                    }),
+                  },
+                ],
+              },
+              overlayStyle: {
+                opacity: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.5],
+                }),
+              },
+            }),
+          }),
         }}
       />
       <Stack.Screen
