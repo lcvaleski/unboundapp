@@ -1,29 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Alert, ScrollView } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../design-system/components/Button';
 import { colors, typography, spacing } from '../design-system/theme';
-import notifee from '@notifee/react-native';
+import notifee, { TriggerNotification } from '@notifee/react-native';
 import remoteNotificationService from '../services/remoteNotificationService';
 
 export const ProfileScreen = ({ navigation }: any) => {
   const { user, signOut, deleteAccount } = useAuth();
   const [notificationStatus, setNotificationStatus] = useState<string>('Unknown');
   const [isCheckingPermission, setIsCheckingPermission] = useState(false);
+  const [scheduledNotifications, setScheduledNotifications] = useState<TriggerNotification[]>([]);
 
   useEffect(() => {
     checkNotificationStatus();
+    loadScheduledNotifications();
   }, []);
 
   const checkNotificationStatus = async () => {
     const settings = await notifee.getNotificationSettings();
-    // Using notifee AuthorizationStatus enum values
-    if (settings.authorizationStatus === 1) {
-      setNotificationStatus('Denied');
-    } else if (settings.authorizationStatus >= 2) {
+    console.log('Notification settings:', settings);
+
+    // Check iOS authorization status (0=NotDetermined, 1=Denied, 2=Authorized, 3=Provisional)
+    // On iOS 12+, also check if any alert types are enabled
+    const isAuthorized = settings.authorizationStatus >= 2 ||
+                        (settings.ios?.alert || settings.ios?.badge || settings.ios?.sound);
+
+    if (isAuthorized) {
       setNotificationStatus('Authorized');
+    } else if (settings.authorizationStatus === 1) {
+      setNotificationStatus('Denied');
     } else {
       setNotificationStatus('Not Determined');
+    }
+  };
+
+  const loadScheduledNotifications = async () => {
+    try {
+      const notifications = await remoteNotificationService.getScheduledNotifications();
+      setScheduledNotifications(notifications);
+    } catch (error) {
+      console.error('Error loading scheduled notifications:', error);
+    }
+  };
+
+  const sendTestNotification = async () => {
+    try {
+      await notifee.displayNotification({
+        title: 'Test Notification 🔔',
+        body: 'This is a test notification from Unbound. Your notifications are working!',
+        ios: {
+          sound: 'default',
+        },
+        android: {
+          channelId: 'daily-challenges',
+          pressAction: {
+            id: 'default',
+          },
+        },
+      });
+      Alert.alert('Test Sent', 'Check your notification panel!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send test notification');
+      console.error('Test notification error:', error);
+    }
+  };
+
+  const formatNotificationDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return `Today at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return `Tomorrow at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+    } else {
+      return date.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
     }
   };
 
@@ -36,7 +96,10 @@ export const ProfileScreen = ({ navigation }: any) => {
         Alert.alert(
           'Notifications Enabled',
           'You will now receive daily challenge reminders!',
-          [{ text: 'OK', onPress: checkNotificationStatus }]
+          [{ text: 'OK', onPress: () => {
+            checkNotificationStatus();
+            loadScheduledNotifications();
+          }}]
         );
         // Schedule notifications for current day if user is on a challenge
         // You might want to track the current day in AsyncStorage or context
@@ -90,7 +153,11 @@ export const ProfileScreen = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.title}>Profile</Text>
         
         <View style={styles.userCard}>
@@ -140,15 +207,65 @@ export const ProfileScreen = ({ navigation }: any) => {
               onPress={handleRequestNotificationPermission}
               variant="primary"
               size="medium"
-              disabled={isCheckingPermission || notificationStatus === 'Denied'}
+              disabled={isCheckingPermission}
               style={styles.notificationButton}
             />
           )}
+
+          <View style={styles.buttonRow}>
+            <Button
+              title="Test Notification"
+              onPress={sendTestNotification}
+              variant="secondary"
+              size="small"
+              style={styles.testButton}
+            />
+            <Button
+              title="Refresh Status"
+              onPress={() => {
+                checkNotificationStatus();
+                loadScheduledNotifications();
+              }}
+              variant="secondary"
+              size="small"
+              style={styles.refreshButton}
+            />
+          </View>
 
           {notificationStatus === 'Denied' && (
             <Text style={styles.deniedText}>
               Please enable notifications in your device settings
             </Text>
+          )}
+        </View>
+
+        <View style={styles.scheduledCard}>
+          <Text style={styles.cardTitle}>Scheduled Notifications</Text>
+
+          {scheduledNotifications.length === 0 ? (
+            <Text style={styles.emptyText}>No notifications scheduled yet</Text>
+          ) : (
+            <View>
+              <Text style={styles.scheduledCount}>
+                {scheduledNotifications.length} notification{scheduledNotifications.length !== 1 ? 's' : ''} scheduled
+              </Text>
+              {scheduledNotifications.slice(0, 5).map((notification, index) => (
+                <View key={notification.notification.id || index} style={styles.scheduledItem}>
+                  <Text style={styles.scheduledTitle}>{notification.notification.title}</Text>
+                  <Text style={styles.scheduledBody}>{notification.notification.body}</Text>
+                  {notification.trigger?.type === 1 && notification.trigger.timestamp && (
+                    <Text style={styles.scheduledTime}>
+                      {formatNotificationDate(notification.trigger.timestamp)}
+                    </Text>
+                  )}
+                </View>
+              ))}
+              {scheduledNotifications.length > 5 && (
+                <Text style={styles.moreText}>
+                  ...and {scheduledNotifications.length - 5} more
+                </Text>
+              )}
+            </View>
           )}
         </View>
 
@@ -177,7 +294,7 @@ export const ProfileScreen = ({ navigation }: any) => {
             style={styles.deleteButton}
           />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -187,9 +304,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background.paper,
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
     padding: spacing.xl,
+    paddingBottom: spacing.xl * 2,
   },
   title: {
     fontSize: typography.fontSize['3xl'],
@@ -205,6 +325,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   notificationCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    padding: spacing.lg,
+    borderRadius: 12,
+    marginBottom: spacing.xl,
+  },
+  scheduledCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     padding: spacing.lg,
     borderRadius: 12,
@@ -232,7 +358,7 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
   },
   actions: {
-    marginTop: 'auto',
+    marginTop: spacing.xl,
   },
   actionButton: {
     width: '100%',
@@ -245,6 +371,63 @@ const styles = StyleSheet.create({
   },
   notificationButton: {
     marginTop: spacing.md,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: spacing.md,
+    gap: spacing.md,
+  },
+  testButton: {
+    flex: 1,
+  },
+  refreshButton: {
+    flex: 1,
+  },
+  emptyText: {
+    fontSize: typography.fontSize.md,
+    color: colors.text.primary,
+    opacity: 0.5,
+    textAlign: 'center',
+    marginTop: spacing.md,
+  },
+  scheduledCount: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.primary,
+    opacity: 0.7,
+    marginBottom: spacing.md,
+  },
+  scheduledItem: {
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
+  },
+  scheduledTitle: {
+    fontSize: typography.fontSize.md,
+    fontFamily: typography.fontFamily.medium,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  scheduledBody: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.primary,
+    opacity: 0.8,
+    marginBottom: spacing.xs,
+  },
+  scheduledTime: {
+    fontSize: typography.fontSize.xs,
+    color: colors.text.primary,
+    opacity: 0.6,
+    marginTop: spacing.xs,
+  },
+  moreText: {
+    fontSize: typography.fontSize.sm,
+    color: colors.text.primary,
+    opacity: 0.5,
+    textAlign: 'center',
+    marginTop: spacing.md,
+    fontStyle: 'italic',
   },
   statusAuthorized: {
     color: '#4A7862', // Green that fits the palette
